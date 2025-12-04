@@ -1,0 +1,74 @@
+body {
+    background: #f1ff83;
+    padding: 20px;
+}
+
+.main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+.main img {
+    height: 180px;
+    margin-bottom: 20px;
+}
+
+.title {
+    font-family: "Anton SC", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 50px;
+    margin: 0px;
+}
+
+.title-red {
+    color: #ff3333;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.pulse {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.1);
+        opacity: 0.7;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.title-paragraph {
+    font-family: "Raleway", sans-serif;
+    font-weight: 600;
+    line-height: 1.7;
+    font-style: normal;
+    color: #333;
+    padding-bottom: 10px;
+}
+
+.title-cta {
+    color: #ffffff;
+    background: #ff3333;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 50px;
+    padding: 15px 35px;
+    box-shadow: 0 6px 20px rgba(255, 51, 51, 0.4);
+    font-size: 1rem;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
