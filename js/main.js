@@ -111,7 +111,7 @@ function iniciarAnalisis() {
 	procesarAnalisis(datosOfertaLaboral); // envio ese objeto a la funcion 2
 }
 
-// FUNCION 2 : recibe los datos y calcula el nivel de riesgo
+// FUNCION 2 : recibe los datos, calcula puntos, detecta alertas , guarda el historial
 function procesarAnalisis(datos) {
 	// recibo el objeto como datos
 
@@ -125,64 +125,134 @@ function procesarAnalisis(datos) {
 
 	//EVALUAMOS CADA RESPUESTA
 
-	if (datos.solicitanDinero){
+	if (datos.solicitanDinero) {
 		puntosRiesgo += 30;
 		alertasDetectadas.push("⚠️ Solicitan dinero por adelantado");
 		console.log("❌ Señal de alerta: Solicitan dinero (+30 puntos de riesgo)");
 	}
 
-    if(datos.salarioAlto){
-        puntosRiesgo += 30;
-        alertasDetectadas.push("⚠️ Salario sospechosamente alto")
-        console.log("❌ Señal de alerta: Salario muy alto (+20 puntos de riesgo)")
-    }
+	if (datos.salarioAlto) {
+		puntosRiesgo += 30;
+		alertasDetectadas.push("⚠️ Salario sospechosamente alto");
+		console.log("❌ Señal de alerta: Salario muy alto (+30 puntos de riesgo)");
+	}
+
+	if (datos.pidenDatosBancarios) {
+		puntosRiesgo += 25;
+		alertasDetectadas.push("⚠️ Piden info bancaria demasiado pronto");
+		console.log(
+			"❌ Señal de alerta: Piden datos bancarios (+25 puntos de riesgo)"
+		);
+	}
+
+	if (datos.tipoEmail.toLowerCase() === "personal") {
+		puntosRiesgo += 15;
+		alertasDetectadas.push("⚠️ Email que no pertenece a la empresa");
+		console.log("❌ Señal de alerta: Email personal (+15 puntos de riesgo)");
+	}
+
+	if (datos.tieneWebOficial.toLowerCase() === "no") {
+		puntosRiesgo += 20;
+		alertasDetectadas.push("⚠️ No tiene web oficial");
+		console.log(
+			"❌ Señal de alerta: No tienen web oficial (+20 puntos de riesgo)"
+		);
+	}
+
+	if (!datos.aplicasteVos) {
+		puntosRiesgo += 10;
+		alertasDetectadas.push("⚠️ Oferta no solicitada");
+		console.log("❌ Señal de alerta: No aplicaste vos (+10 puntos de riesgo)");
+	}
+
+	if (datos.chequeEquipo) {
+		puntosRiesgo += 35;
+		alertasDetectadas.push("⚠️ Cheque para comprar equipo (ESTAFA COMÚN)");
+		console.log(
+			"❌ Señal de alerta: Cheque para equipo (+35 puntos de riesgo)"
+		);
+	}
+
+	if (!datos.tieneLinkedIn) {
+		puntosRiesgo += 20;
+		alertasDetectadas.push("⚠️ Sin presencia verificable en LinkedIn");
+		console.log(
+			"❌ Señal de alerta: No tienen LinkedIn (+20 puntos de riesgo)"
+		);
+	}
+
+	console.log(`\n📊 Total de puntos de riesgo: ${puntosRiesgo}`);
+
+	//Guardamos el resultado en el historial
+	let resultadoAnalisis = {
+		numeroAnalisis: datos.numeroAnalisis, // x oferta = Análisis #1
+		puntosRiesgo: puntosRiesgo,
+		alertasDetectadas: alertasDetectadas,
+		fecha: new Date().toLocaleString(),
+	};
+
+	historialAnalisis.push(resultadoAnalisis);
+
+	// Llamamos a la función que muestra los resultados
+	mostrarResultados(puntosRiesgo, alertasDetectadas);
+}
+
+// FUNCION 3 : muestra el resultado/mensaje final al usuario
+function mostrarResultados(puntos, alertas) {
+	console.log("\n=== RESULTADO DEL ANÁLISIS ===\n");
+
+	let conclusion = "";
+	let nivelRiesgo;
+
+	if (puntos >= 60) {
+        // 60-185 puntos = ALERTA MÁXIMA
+		conclusion = "🚨 ALERTA MÁXIMA - POSIBLE ESTAFA";
+		nivelRiesgo = "MUY ALTO";
+	} else if (puntos >= 40) {
+        // 40-59 puntos = SOSPECHOSO
+		conclusion = "⚠️ SOSPECHOSO - Procede con extrema cautela";
+		nivelRiesgo = "ALTO";
+	} else if (puntos >= 20) {
+        // 20-39 puntos = ADVERTENCIA
+		conclusion = "⚡ ADVERTENCIA - Verifica más información";
+		nivelRiesgo = "MEDIO";
+	} else {
+         // 0-19 puntos = APARENTEMENTE SEGURO
+		conclusion = "✅ APARENTEMENTE SEGURO - Aún así, investiga";
+		nivelRiesgo = "BAJO";
+	}
+
+	console.log(`${conclusion}`);
+	console.log(`Nivel de riesgo: ${nivelRiesgo}`);
+	console.log(`Puntos de riesgo: ${puntos}/185\n`);
+
+	// mostramos todas las alertas detectadas
+	if (alertas.length > 0) {
+		console.log("Señales de alerta detectadas:");
+		for (let i = 0; i < alertas.length; i++) {
+			// recorre [] muestra cada alerta
+			console.log(`  ${i + 1}. ${alertas[i]}`); // accedemos al elemento del [] en la posicion i
+		}
+	} else {
+		console.log("✓ No se detectaron señales de alerta obvias.");
+	}
+
+	let mensajeAlerta =
+		conclusion +
+		"\n\n" +
+		"Nivel de riesgo: " +
+		nivelRiesgo +
+		"\n" +
+		"Puntos: " +
+		puntos +
+		"/185\n\n";
+
+	if (alertas.length > 0) {
+		// si el array tiene al menos 1 elemento
+		mensajeAlerta += "Alertas detectadas: " + alertas.length + "\n\n";
+		mensajeAlerta += "Revisa la consola para mas detalles.";
+	}
     
-    if(datos.pidenDatosBancarios){
-        puntosRiesgo += 25;
-        alertasDetectadas.push("⚠️ Piden info bancaria demasiado pronto")
-        console.log("❌ Señal de alerta: Piden datos bancarios (+25 puntos de riesgo)")
-    }
-
-    if(datos.tipoEmail.toLowerCase() === "personal"){
-        puntosRiesgo += 15;
-        alertasDetectadas.push("⚠️ Email que no pertenece a la empresa")
-        console.log("❌ Señal de alerta: Email personal (+15 puntos de riesgo)")
-    }
-
-    if(datos.tieneWebOficial.toLowerCase() === "no"){
-        puntosRiesgo += 20
-        alertasDetectadas.push("⚠️ No tiene web oficial")
-        console.log("❌ Señal de alerta: No tienen web oficial (+20 puntos de riesgo)")
-    }
-
-    if(!datos.aplicasteVos){
-        puntosRiesgo += 10
-        alertasDetectadas.push("⚠️ Oferta no solicitada")
-        console.log("❌ Señal de alerta: No aplicaste vos (+10 puntos de riesgo)")
-    }
-
-    if(datos.chequeEquipo){
-        puntosRiesgo += 35;
-        alertasDetectadas.push("⚠️ Cheque para comprar equipo (ESTAFA COMÚN)")
-        console.log("❌ Señal de alerta: Cheque para equipo (+35 puntos de riesgo)")
-    }
-
-    if(!datos.tieneLinkedIn){
-        puntosRiesgo += 20;
-        alertasDetectadas.push("⚠️ Sin presencia verificable en LinkedIn")
-        console.log("❌ Señal de alerta: No tienen LinkedIn (+20 puntos de riesgo)")
-    }
-
-    console.log(`\n📊 Total de puntos de riesgo: ${puntosRiesgo}`)
-
-    //Guardamos el resultado en el historial
-    let resultadoAnalisis = {
-        numeroAnalisis: datos.numeroAnalisis,// x oferta = Análisis #1
-        puntosRiesgo: datos.puntosRiesgo,
-        alertasDetectadas: datos.alertasDetectadas,
-        fecha: new Date().toLocaleString()
-    };
-
-    historialAnalisis.push(resultadoAnalisis)
-
+    //muestra el mensaje de alerta / resultado final
+	alert(mensajeAlerta);
 }
