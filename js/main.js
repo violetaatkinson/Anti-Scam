@@ -27,7 +27,7 @@ function iniciarAnalisis() {
 
 	// el contador va incrementando cada vez que inicia un analisis
 	contadorAnalisis++;
-	console.log(`Análisis #${contadorAnalisis}`);
+	console.log(`Análisis #${contadorAnalisis}`); //muestra analisis 1, 2,3
 	console.log(
 		"Por favor, responde las siguientes preguntas sobre la oferta laboral.\n"
 	);
@@ -46,7 +46,7 @@ function iniciarAnalisis() {
 	//promt() ? de texto , devuelve el texto que usuario escribio
 	//VALIDACION PARA TIPO EMAIL
 	let tipoEmail = "";
-	while (tipoEmail !== "corporativo" && tipoEmail !== "personal") {
+	while (tipoEmail !== "corporativo" && tipoEmail !== "personal") { //no es igual a
 		// si no responde bien vuelve a preguntar
 		tipoEmail = prompt(
 			"¿Qué tipo de email utilizan?\n(escribe: 'corporativo' o 'personal')"
@@ -95,7 +95,7 @@ function iniciarAnalisis() {
 		"¿La empresa tiene presencia verificable en LinkedIn?"
 	);
 
-	//Guardamos toda la info en un objeto que agrupa los datos relacionados
+	//Guardamos toda la info ⬇️ en un objeto que agrupa los datos relacionados
 	let datosOfertaLaboral = {
 		solicitanDinero: solicitanDinero,
 		salarioAlto: salarioAlto,
@@ -128,9 +128,10 @@ function procesarAnalisis(datos) {
 
 	//EVALUAMOS CADA RESPUESTA
 
-	if (datos.solicitanDinero) {
-		puntosRiesgo += 30;
-		alertasDetectadas.push("⚠️ Solicitan dinero por adelantado");
+    //accedemos a la propiedad del objeto datos que nos fue enviado
+	if (datos.solicitanDinero) { // si true entra al objeto
+		puntosRiesgo += 30; // sumo y guardo
+		alertasDetectadas.push("⚠️ Solicitan dinero por adelantado");// agrego la alerta y la guardo
 		console.log("❌ Señal de alerta: Solicitan dinero (+30 puntos de riesgo)");
 	}
 
@@ -184,20 +185,22 @@ function procesarAnalisis(datos) {
 		);
 	}
 
+    //despues de evaluar todo muestro el total de puntos acumulados
 	console.log(`\n📊 Total de puntos de riesgo: ${puntosRiesgo}`);
 
-	//Guardamos el resultado en el historial
+	//Guardamos el resultado en el historial ⬇️
 	let resultadoAnalisis = {
 		numeroAnalisis: datos.numeroAnalisis, // x oferta = Análisis #1
-		puntosRiesgo: puntosRiesgo,
-		alertasDetectadas: alertasDetectadas,
-		fecha: new Date().toLocaleString(),
+		puntosRiesgo: puntosRiesgo, // guardo total de puntos acumulados
+		alertasDetectadas: alertasDetectadas, // guardamos todas las alertas
+		fecha: new Date().toLocaleString(), // crea objeto con fecha/hora actual y lo convierto a texto legible
 	};
 
+    //agregamos ese resultado ⬆️ y queda guardado
 	historialAnalisis.push(resultadoAnalisis);
 
-	// Llamamos a la función que muestra los resultados
-	mostrarResultados(puntosRiesgo, alertasDetectadas);
+	// Llamamos a la función 3 que muestra los resultados y pasamos el objeto a la func 3 ⬇️
+	mostrarResultados(puntosRiesgo, alertasDetectadas);//recibe puntos y alertas⬇️
 }
 
 // FUNCION 3 : muestra el resultado/mensaje final al usuario
@@ -207,7 +210,7 @@ function mostrarResultados(puntos, alertas) {
 	let conclusion = "";
 	let nivelRiesgo;
 
-	if (puntos >= 60) {
+	if (puntos >= 60) { // mayor = a 60
 		// 60-185 puntos = ALERTA MÁXIMA
 		conclusion = "🚨 ALERTA MÁXIMA - POSIBLE ESTAFA";
 		nivelRiesgo = "MUY ALTO";
@@ -230,9 +233,9 @@ function mostrarResultados(puntos, alertas) {
 	console.log(`Puntos de riesgo: ${puntos}/185\n`);
 
 	// mostramos todas las alertas detectadas
-	if (alertas.length > 0) {
+	if (alertas.length > 0) { // si tiene al menos 1 elemento muestro alertas
 		console.log("Señales de alerta detectadas:");
-		for (let i = 0; i < alertas.length; i++) {
+		for (let i = 0; i < alertas.length; i++) { //mientra i =0 sea menor q la cant de elementos
 			// recorre [] muestra cada alerta
 			console.log(`  ${i + 1}. ${alertas[i]}`); // accedemos al elemento del [] en la posicion i
 		}
@@ -251,15 +254,15 @@ function mostrarResultados(puntos, alertas) {
 		"/185\n\n";
 
 	if (alertas.length > 0) {
-		// si el array tiene al menos 1 elemento
-		mensajeAlerta += "Alertas detectadas: " + alertas.length + "\n\n";
+		// si hay alertas cuantas hay
+		mensajeAlerta += "Alertas detectadas: " + alertas.length + "\n\n"; // numero de elementos en el []
 		mensajeAlerta += "Revisa la consola para mas detalles.";
 	}
 
 	//muestra el mensaje de alerta / resultado final
 	alert(mensajeAlerta);
 
-	// preguntamos si quiere ver el historial o hacer otro analisis
+	// preguntamos si quiere ver el historial o hacer otro analisis , llamo a la fun 4
 	mostrarOpciones();
 }
 
@@ -272,15 +275,15 @@ function mostrarOpciones() {
 	);
 
 	if (opcion === "1") {
-		iniciarAnalisis();
+		iniciarAnalisis();// inicia un nuevo analisis
 	} else if (opcion === "2") {
-		mostrarHistorial();
-	} else if (opcion === "3") {
+		mostrarHistorial();// muestro todos los resultados anteriores
+	} else if (opcion === "3") { //muestro mensaje de despedida
 		console.log(
-			"\n✓ Gracias por usar ANTI SCAM. ¡No te dejes engañar por ofertas de trabajo falsas!"
+			"\n✓ Gracias por usar ANTI SCAM.\n¡No te dejes engañar por ofertas de trabajo falsas!"
 		);
 		alert(
-			" Gracias por usar ANTI SCAM. ¡Mantén a salvo tu información y tus finanzas!"
+			"Gracias por usar ANTI SCAM.\n\n¡Mantén a salvo tu información y tus finanzas!"
 		);
 	} else {
 		alert("Opción no válida. Cerrando el analizador.");
