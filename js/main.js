@@ -25,31 +25,70 @@ let contadorAnalisis = 0;
 function iniciarAnalisis() {
 	console.log("=== DETECTOR DE ESTAFAS LABORALES ===\n");
 
+	// busca nombre en localStorage sino existe null
+	let nombreUsuario = localStorage.getItem("nombreUsuario");
+
+	console.log("🔍 Buscando nombre en localStorage...");
+	console.log(`Resultado: ${nombreUsuario}`); // muestra que encontro
+
+	// si no encontro nada
+	if (nombreUsuario === null || nombreUsuario === "") {
+		console.log(
+			"❌ No se encontró ningun nombre guardado.",
+		);
+
+		// 1. pedimos el nombre
+		nombreUsuario = prompt("👋 ¡Bienvenido a ANTI SCAM!\n\n¿Cómo te llamas?");
+
+		// 2. validamos - usuario cancelo o no escribio nada
+		if (nombreUsuario === null || nombreUsuario.trim() === "") {
+			console.log("⚠️ nombre de usuario no proporcionado.");
+			alert("Necesitamos tu nombre para poder continuar 😊");
+			return; // DETIENE la función, no continúa sin un nombre
+		}
+
+		// 3. guardamos en localStorage
+		nombreUsuario = nombreUsuario.trim(); //sacamos los espacios
+		localStorage.setItem("nombreUsuario", nombreUsuario);
+		console.log(
+			`✅ Sesión actualizada con el nombre de usuario: ${nombreUsuario}`,
+		);
+		alert(`✅ Tu nombre ha sido guardado.`);
+
+	} else { // ya existia el nombre
+		console.log(`✅ Nombre de usuario encontrado en sesión: ${nombreUsuario}`);
+	}
+
+	console.log(`\n=== Hola ${nombreUsuario}, bienvenido al DETECTOR DE ESTAFAS LABORALES ===\n`);
+	alert(`¡Hola ${nombreUsuario}! 👋\n\nVamos a analizar las ofertas laborales.`);
+
+
 	// el contador va incrementando cada vez que inicia un analisis
 	contadorAnalisis++;
 	console.log(`Análisis #${contadorAnalisis}`); //muestra analisis 1, 2,3
 	console.log(
-		"Por favor, responde las siguientes preguntas sobre la oferta laboral.\n"
+		"Por favor, responde las siguientes preguntas sobre la oferta laboral.\n",
 	);
 
 	// confirm() para ? de si/OK = true o no/CANCEL = false
 	let solicitanDinero = confirm(
-		"¿La oferta solicita algún pago o inversión inicial?"
+		"¿La oferta solicita algún pago o inversión inicial?",
 	);
 	let salarioAlto = confirm(
-		"¿El salario ofrecido es más alto que el promedio del mercado?"
+		"¿El salario ofrecido es más alto que el promedio del mercado?",
 	);
 	let pidenDatosBancarios = confirm(
-		"¿Te pidieron datos bancarios antes de una entrevista?"
+		"¿Te pidieron datos bancarios antes de una entrevista?",
 	);
 
 	//promt() ? de texto , devuelve el texto que usuario escribio
 	//VALIDACION PARA TIPO EMAIL
 	let tipoEmail = "";
-	while (tipoEmail !== "corporativo" && tipoEmail !== "personal") { //no es igual a
+	while (tipoEmail !== "corporativo" && tipoEmail !== "personal") {
+		//no es igual a
 		// si no responde bien vuelve a preguntar
 		tipoEmail = prompt(
-			"¿Qué tipo de email utilizan?\n(escribe: 'corporativo' o 'personal')"
+			"¿Qué tipo de email utilizan?\n(escribe: 'corporativo' o 'personal')",
 		);
 
 		// Si el usuario cancela= null o ok=""
@@ -62,7 +101,7 @@ function iniciarAnalisis() {
 			// Si no escribió una opción válida
 			if (tipoEmail !== "corporativo" && tipoEmail !== "personal") {
 				alert(
-					"❌ Respuesta inválida. Por favor escribe 'corporativo' o 'personal'"
+					"❌ Respuesta inválida. Por favor escribe 'corporativo' o 'personal'",
 				);
 			}
 		}
@@ -72,7 +111,7 @@ function iniciarAnalisis() {
 	let tieneWebOficial = "";
 	while (tieneWebOficial !== "si" && tieneWebOficial !== "no") {
 		tieneWebOficial = prompt(
-			"¿La empresa tiene página web oficial?\n(escribe: 'si' o 'no')"
+			"¿La empresa tiene página web oficial?\n(escribe: 'si' o 'no')",
 		);
 		if (tieneWebOficial === null || tieneWebOficial === "") {
 			alert("⚠️ Debes responder esta pregunta para continuar.");
@@ -86,13 +125,13 @@ function iniciarAnalisis() {
 	}
 
 	let aplicasteVos = confirm(
-		"¿Aplicaste vos mismo a esta oferta o te llegó sin solicitarla?"
+		"¿Aplicaste vos mismo a esta oferta o te llegó sin solicitarla?",
 	);
 	let chequeEquipo = confirm(
-		"¿Te mencionaron que te enviarian un cheque para comprar equipo/software?"
+		"¿Te mencionaron que te enviarian un cheque para comprar equipo/software?",
 	);
 	let tieneLinkedIn = confirm(
-		"¿La empresa tiene presencia verificable en LinkedIn?"
+		"¿La empresa tiene presencia verificable en LinkedIn?",
 	);
 
 	//Guardamos toda la info ⬇️ en un objeto que agrupa los datos relacionados
@@ -128,10 +167,11 @@ function procesarAnalisis(datos) {
 
 	//EVALUAMOS CADA RESPUESTA
 
-    //accedemos a la propiedad del objeto datos que nos fue enviado
-	if (datos.solicitanDinero) { // si true entra al objeto
+	//accedemos a la propiedad del objeto datos que nos fue enviado
+	if (datos.solicitanDinero) {
+		// si true entra al objeto
 		puntosRiesgo += 30; // sumo y guardo
-		alertasDetectadas.push("⚠️ Solicitan dinero por adelantado");// agrego la alerta y la guardo
+		alertasDetectadas.push("⚠️ Solicitan dinero por adelantado"); // agrego la alerta y la guardo
 		console.log("❌ Señal de alerta: Solicitan dinero (+30 puntos de riesgo)");
 	}
 
@@ -145,7 +185,7 @@ function procesarAnalisis(datos) {
 		puntosRiesgo += 25;
 		alertasDetectadas.push("⚠️ Piden info bancaria demasiado pronto");
 		console.log(
-			"❌ Señal de alerta: Piden datos bancarios (+25 puntos de riesgo)"
+			"❌ Señal de alerta: Piden datos bancarios (+25 puntos de riesgo)",
 		);
 	}
 
@@ -159,7 +199,7 @@ function procesarAnalisis(datos) {
 		puntosRiesgo += 20;
 		alertasDetectadas.push("⚠️ No tiene web oficial");
 		console.log(
-			"❌ Señal de alerta: No tienen web oficial (+20 puntos de riesgo)"
+			"❌ Señal de alerta: No tienen web oficial (+20 puntos de riesgo)",
 		);
 	}
 
@@ -173,7 +213,7 @@ function procesarAnalisis(datos) {
 		puntosRiesgo += 35;
 		alertasDetectadas.push("⚠️ Cheque para comprar equipo (ESTAFA COMÚN)");
 		console.log(
-			"❌ Señal de alerta: Cheque para equipo (+35 puntos de riesgo)"
+			"❌ Señal de alerta: Cheque para equipo (+35 puntos de riesgo)",
 		);
 	}
 
@@ -181,11 +221,11 @@ function procesarAnalisis(datos) {
 		puntosRiesgo += 20;
 		alertasDetectadas.push("⚠️ Sin presencia verificable en LinkedIn");
 		console.log(
-			"❌ Señal de alerta: No tienen LinkedIn (+20 puntos de riesgo)"
+			"❌ Señal de alerta: No tienen LinkedIn (+20 puntos de riesgo)",
 		);
 	}
 
-    //despues de evaluar todo muestro el total de puntos acumulados
+	//despues de evaluar todo muestro el total de puntos acumulados
 	console.log(`\n📊 Total de puntos de riesgo: ${puntosRiesgo}`);
 
 	//Guardamos el resultado en el historial ⬇️
@@ -196,11 +236,11 @@ function procesarAnalisis(datos) {
 		fecha: new Date().toLocaleString(), // crea objeto con fecha/hora actual y lo convierto a texto legible
 	};
 
-    //agregamos ese resultado ⬆️ y queda guardado
+	//agregamos ese resultado ⬆️ y queda guardado
 	historialAnalisis.push(resultadoAnalisis);
 
 	// Llamamos a la función 3 que muestra los resultados y pasamos el objeto a la func 3 ⬇️
-	mostrarResultados(puntosRiesgo, alertasDetectadas);//recibe puntos y alertas⬇️
+	mostrarResultados(puntosRiesgo, alertasDetectadas); //recibe puntos y alertas⬇️
 }
 
 // FUNCION 3 : muestra el resultado/mensaje final al usuario
@@ -210,7 +250,8 @@ function mostrarResultados(puntos, alertas) {
 	let conclusion = "";
 	let nivelRiesgo;
 
-	if (puntos >= 60) { // mayor = a 60
+	if (puntos >= 60) {
+		// mayor = a 60
 		// 60-185 puntos = ALERTA MÁXIMA
 		conclusion = "🚨 ALERTA MÁXIMA - POSIBLE ESTAFA";
 		nivelRiesgo = "MUY ALTO";
@@ -233,9 +274,11 @@ function mostrarResultados(puntos, alertas) {
 	console.log(`Puntos de riesgo: ${puntos}/185\n`);
 
 	// mostramos todas las alertas detectadas
-	if (alertas.length > 0) { // si tiene al menos 1 elemento muestro alertas
+	if (alertas.length > 0) {
+		// si tiene al menos 1 elemento muestro alertas
 		console.log("Señales de alerta detectadas:");
-		for (let i = 0; i < alertas.length; i++) { //mientra i =0 sea menor q la cant de elementos
+		for (let i = 0; i < alertas.length; i++) {
+			//mientra i =0 sea menor q la cant de elementos
 			// recorre [] muestra cada alerta
 			console.log(`  ${i + 1}. ${alertas[i]}`); // accedemos al elemento del [] en la posicion i
 		}
@@ -271,19 +314,20 @@ function mostrarOpciones() {
 	console.log("\n--- Opciones ---");
 
 	let opcion = prompt(
-		"¿Qué te gustaría hacer?\n1 - Analizar otra oferta\n2 - Ver el historial\n3 - Salir\n\nEscribe el número:"
+		"¿Qué te gustaría hacer?\n1 - Analizar otra oferta\n2 - Ver el historial\n3 - Salir\n\nEscribe el número:",
 	);
 
 	if (opcion === "1") {
-		iniciarAnalisis();// inicia un nuevo analisis
+		iniciarAnalisis(); // inicia un nuevo analisis
 	} else if (opcion === "2") {
-		mostrarHistorial();// muestro todos los resultados anteriores
-	} else if (opcion === "3") { //muestro mensaje de despedida
+		mostrarHistorial(); // muestro todos los resultados anteriores
+	} else if (opcion === "3") {
+		//muestro mensaje de despedida
 		console.log(
-			"\n✓ Gracias por usar ANTI SCAM.\n¡No te dejes engañar por ofertas de trabajo falsas!"
+			"\n✓ Gracias por usar ANTI SCAM.\n¡No te dejes engañar por ofertas de trabajo falsas!",
 		);
 		alert(
-			"Gracias por usar ANTI SCAM.\n\n¡Mantén a salvo tu información y tus finanzas!"
+			"Gracias por usar ANTI SCAM.\n\n¡Mantén a salvo tu información y tus finanzas!",
 		);
 	} else {
 		alert("Opción no válida. Cerrando el analizador.");
@@ -314,9 +358,8 @@ function mostrarHistorial() {
 	}
 
 	alert(
-		`Se han realizado ${historialAnalisis.length} análisis en esta sesión.\n\nRevisa la consola para ver los detalles completos.`
+		`Se han realizado ${historialAnalisis.length} análisis en esta sesión.\n\nRevisa la consola para ver los detalles completos.`,
 	);
 
-    mostrarOpciones(); // Volvemos al menú
+	mostrarOpciones(); // Volvemos al menú
 }
-
