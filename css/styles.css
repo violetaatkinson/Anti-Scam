@@ -14,7 +14,13 @@ body {
 .main img {
     height: 180px;
     margin-bottom: 20px;
+    animation: float 3s ease-in-out infinite;
 }
+
+.float {
+    animation: float 3s ease-in-out infinite;
+}
+
 
 .title {
     font-family: "Anton SC", sans-serif;
@@ -33,7 +39,6 @@ body {
     animation: pulse 2s ease-in-out infinite;
 }
 
-
 @keyframes pulse {
     0% {
         transform: scale(1);
@@ -51,9 +56,22 @@ body {
     }
 }
 
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px); 
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+
 .title-paragraph {
     font-family: "Raleway", sans-serif;
-    font-weight: 600;
+    font-weight: 500;
     line-height: 1.7;
     font-style: normal;
     color: #333;
