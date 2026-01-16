@@ -72,3 +72,18 @@ body {
     letter-spacing: 1px;
     font-weight: 600;
 }
+
+
+
+
+/*----- Responsive Moviles ------*/
+@media (max-width: 571px) {
+
+    .main img {
+        height: 160px;
+    }
+
+    .no-show {
+        display: none;
+    }
+}
