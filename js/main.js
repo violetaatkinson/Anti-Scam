@@ -313,8 +313,8 @@ function mostrarResultados(puntos, alertas) {
 function mostrarOpciones() {
 	console.log("\n--- Opciones ---");
 
-	let opcion = prompt(
-		"¿Qué te gustaría hacer?\n1 - Analizar otra oferta\n2 - Ver el historial\n3 - Salir\n\nEscribe el número:",
+		let opcion = prompt(
+		"¿Qué te gustaría hacer?\n1 - Analizar otra oferta\n2 - Ver el historial\n3 - Cerrar sesión\n4 - Salir\n\nEscribe el número:",                                               
 	);
 
 	if (opcion === "1") {
@@ -322,20 +322,50 @@ function mostrarOpciones() {
 	} else if (opcion === "2") {
 		mostrarHistorial(); // muestro todos los resultados anteriores
 	} else if (opcion === "3") {
-		//muestro mensaje de despedida
-		console.log(
-			"\n✓ Gracias por usar ANTI SCAM.\n¡No te dejes engañar por ofertas de trabajo falsas!",
-		);
-		alert(
-			"Gracias por usar ANTI SCAM.\n\n¡Mantén a salvo tu información y tus finanzas!",
-		);
+		cerrarSesion();
+		
+	} else if (opcion === "4") {
+		console.log("\n✓ Gracias por usar ANTI SCAM.\n¡No te dejes engañar por ofertas de trabajo falsas!");
+		alert("Gracias por usar ANTI SCAM.\n\n¡Mantén a salvo tu información y tus finanzas!");
 	} else {
 		alert("Opción no válida. Cerrando el analizador.");
 		console.log("❌ Opción no válida.");
 	}
 }
 
-// FUNCION 5 : Lista de todos los analisis
+// FUNCION 5: Cerrar sesion
+
+function cerrarSesion() {
+	console.log("\n=== CERRANDO SESIÓN ===\n");
+	let nombreUsuario = localStorage.getItem('nombreUsuario');
+
+	// verificamos si existe un nombre guardado
+	if(nombreUsuario === null || nombreUsuario === "") {
+		alert("⚠️ No hay ninguna sesión activa para cerrar.");
+		mostrarOpciones();
+		return;
+	}
+
+	let confirmar = confirm( `¿Deseas cerrar sesión?\n\nSe eliminará tu información de este navegador.`);
+
+	if(confirmar) {
+		localStorage.removeItem('nombreUsuario');
+		console.log(`✅ Sesión cerrada correctamente.`);
+		alert(`Hasta luego, ${nombreUsuario}.\n\nTu información ya no aparecerá en este navegador.`);
+
+		console.log("\n✓ Gracias por usar ANTI SCAM.\n¡No te dejes engañar por ofertas de trabajo falsas!");
+		alert("Gracias por usar ANTI SCAM.\n\n¡Mantén a salvo tu información y tus finanzas!")
+	} else {
+		// si no confirma , no borramos nada
+		console.log("ℹ️ Cierre de sesión cancelado por el usuario.");
+		alert("Tu sesión sigue activa ✅.");
+		mostrarOpciones();
+	}
+	
+}
+
+
+// FUNCION 6 : Lista de todos los analisis
 function mostrarHistorial() {
 	console.log("\n=== HISTORIAL DE ANÁLISIS ===\n");
 
