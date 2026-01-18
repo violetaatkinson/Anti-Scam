@@ -51,7 +51,7 @@ const nivelesRiesgo = [
 ];
 
 // MENSAJE DE INICIO
-console.log("🔍 ANTI SCAM cargado correctamente.");
+console.log("%c🔍 ANTI SCAM", "font-size: 24px; font-weight: bold; color: #e74c3c;");
 console.log("Pulsa 'Analizar Oferta' para empezar.\n");
 
 // guarda el historial de analisis de la sesion
@@ -136,7 +136,7 @@ function iniciarAnalisis() {
 
 	let nombreEmpresa = "";
 	while (nombreEmpresa.trim() === "") { // si esta vacio sigue preguntando
-		nombreEmpresa = prompt("📋 ¿Cuál es el nombre de la empresa?\n(Escribe el nombre de la empresa que ofrece el trabajo)");
+		nombreEmpresa = prompt("📋 Nombre de la empresa:");
 		
 		if (nombreEmpresa === null) {
 			alert("⚠️ Necesitamos el nombre de la empresa para continuar.");
@@ -188,7 +188,7 @@ function iniciarAnalisis() {
 function procesarAnalisis(datos) {
 	// recibo el objeto como datos
 
-	console.log("\n=== PROCESANDO ANÁLISIS ===\n");
+	console.log("\n===  ⚙️ PROCESANDO ANÁLISIS ===\n");
 
 	//Filter => recorre cada objeto del array redFlags, ejecuta la funcion evaluar datos de c/u que devuelve true/false,
 	// true lo incluye en el objeto sino lo descarta y devuelve un nuevo array solo con los true
