@@ -13,17 +13,34 @@
 		<title>ANTI SCAM ❌</title>
 	</head>
 	<body>
-		<div class="main">
-			<img src="./images/logo.svg" alt="logo" />
-			<h1 class="title">ANTI<span class="title-red"> SCAM</span></h1>
-			<p class="title-paragraph">
-				Esta Herramienta te ayudará a evaluar la
-				oferta de trabajo,<br class="no-show" /> a proteger tu información y tu seguridad financiera.
-			</p>
-			<button class="title-cta" onclick="iniciarAnalisis()">
-				Analizar oferta
-			</button>
+		<!-- ========  PANTALLA 1: BIENVENIDA ========-->
+		<div id="pantallaBienvenida" class="pantalla-activa">
+			<div class="main">
+				<img src="./images/logo.svg" alt="logo" />
+				<h1 class="title">ANTI<span class="title-red"> SCAM</span></h1>
+				<p class="title-paragraph">
+					Esta Herramienta te ayudará a evaluar la oferta de trabajo,<br
+						class="no-show"
+					/>
+					a proteger tu información y tu seguridad financiera.
+				</p>
+				<div class="input-container">
+					<input
+						type="text"
+						id="input-nombre"
+						placeholder="👋 ¿Cómo te llamas?"
+					/>
+					<p class="error-message" id="error-nombre">
+						⚠️ Por favor ingresa tu nombre
+					</p>
+					<button class="title-cta" onclick="iniciarAnalisis()">
+						Analizar oferta
+					</button>
+				</div>
+			</div>
 		</div>
+
+		
 
 		<script src="js/main.js"></script>
 	</body>
