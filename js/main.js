@@ -1,380 +1,621 @@
-/* RED FLAGS 🚩🚩🚩- lista de chequeo  - objeto con 3 props*/ 
+/* RED FLAGS 🚩🚩🚩- lista de chequeo */
 const redFlags = [
+	{
+		puntos: 35,
+		mensaje: "⚠️ Cheque para comprar equipo (ESTAFA COMÚN)",
+		evaluar: (datos) => datos.chequeEquipo === true, //  datos = respuesta del usuario si dijo T se activa
+		gravedad: "critica", // asigno el color
+	},
 	{
 		puntos: 30,
 		mensaje: "⚠️ Solicitan dinero por adelantado",
-		// funcion que recibe datos y devuelve true o false
 		evaluar: (datos) => datos.solicitanDinero === true,
+		gravedad: "alta",
 	},
 	{
 		puntos: 30,
 		mensaje: "⚠️ Salario sospechosamente alto",
 		evaluar: (datos) => datos.salarioAlto === true,
+		gravedad: "alta",
 	},
 	{
 		puntos: 25,
 		mensaje: "⚠️ Piden info bancaria demasiado pronto",
 		evaluar: (datos) => datos.pidenDatosBancarios === true,
+		gravedad: "alta",
 	},
 	{
-        puntos: 15,
-        mensaje: '⚠️ Email que no pertenece a la empresa',
-        evaluar: (datos) => datos.tipoEmail === 'personal'
-    },
+		puntos: 20,
+		mensaje: "⚠️ No tiene web oficial",
+		evaluar: (datos) => datos.tieneWebOficial === "no",
+		gravedad: "media",
+	},
 	{
-        puntos: 20,
-        mensaje: '⚠️ No tiene web oficial',
-        evaluar: (datos) => datos.tieneWebOficial === 'no'
-    },
+		puntos: 20,
+		mensaje: "⚠️ Sin presencia verificable en LinkedIn",
+		evaluar: (datos) => datos.tieneLinkedIn === false,
+		gravedad: "media",
+	},
 	{
-        puntos: 10,
-        mensaje: '⚠️ Oferta no solicitada',
-        evaluar: (datos) => datos.aplicasteVos === false
-    },
+		puntos: 15,
+		mensaje: "⚠️ Email que no pertenece a la empresa",
+		evaluar: (datos) => datos.tipoEmail === "personal",
+		gravedad: "media",
+	},
 	{
-        puntos: 35,
-        mensaje: '⚠️ Cheque para comprar equipo (ESTAFA COMÚN)',
-        evaluar: (datos) => datos.chequeEquipo === true
-    },
-	 {
-        puntos: 20,
-        mensaje: '⚠️ Sin presencia verificable en LinkedIn',
-        evaluar: (datos) => datos.tieneLinkedIn === false
-    }
+		puntos: 10,
+		mensaje: "⚠️ Oferta no solicitada",
+		evaluar: (datos) => datos.aplicasteVos === false,
+		gravedad: "baja",
+	},
+	{
+		puntos: 30,
+		mensaje: "⚠️ Proceso de selección inusualmente rápido y sin entrevistas",
+		evaluar: (datos) => datos.procesoRapido === true,
+		gravedad: "alta",
+	}
+	
 ];
 
 const nivelesRiesgo = [
-	{ min: 60, conclusion: "🚨 ALERTA MÁXIMA - POSIBLE ESTAFA", nivel: "MUY ALTO" },
-	{ min: 40, conclusion: "⚠️ SOSPECHOSO - Procede con extrema cautela", nivel: "ALTO" },
-	{ min: 20, conclusion: "⚡ ADVERTENCIA - Verifica más información", nivel: "MEDIO" },
-	{ min: 0, conclusion: "✅ APARENTEMENTE SEGURO - Aún así, investiga", nivel: "BAJO" }
+	{
+		min: 60,
+		conclusion: "🚨 ALERTA MÁXIMA - POSIBLE ESTAFA",
+		nivel: "MUY ALTO",
+		clase: "nivel-muy-alto",
+		badge: "badge-muy-alto",
+	},
+	{
+		min: 40,
+		conclusion: "⚠️ SOSPECHOSO - Procede con cautela",
+		nivel: "ALTO",
+		clase: "nivel-alto",
+		badge: "badge-alto",
+	},
+	{
+		min: 20,
+		conclusion: "⚡ ADVERTENCIA - Verifica más información",
+		nivel: "MEDIO",
+		clase: "nivel-medio",
+		badge: "badge-medio",
+	},
+	{
+		min: 0,
+		conclusion: "✅ APARENTEMENTE SEGURO - Aún así, investiga",
+		nivel: "BAJO",
+		clase: "nivel-bajo",
+		badge: "badge-bajo",
+	},
 ];
 
 // MENSAJE DE INICIO
-console.log("%c🔍 ANTI SCAM", "font-size: 24px; font-weight: bold; color: #e74c3c;");
-console.log("Pulsa 'Analizar Oferta' para empezar.\n");
+console.log(
+	"%c🔍 ANTI SCAM",
+	"font-size: 24px; font-weight: bold; color: #e74c3c;",
+);
+console.log("Pulsa 'Comenzar Análisis' para empezar.\n");
 
-// guarda el historial de analisis de la sesion
-let historialAnalisis = [];
+let datosOfertaActual = {}; // Guarda las respuestas del usuario del form
+let preguntaActualNum = 1; // N. de pregunta actual,siguiente preguntaActualNum++ = 2 y asi , muestra y oculta la preg
+let contadorAnalisis = 0; // Cuenta cuántos análisis se hicieron en total en la sesion, se incrementa cada vez q completas un analisis
+let historialAnalisis = []; // guarda todos los analisis de la sesion
+let analisisSeleccionado = null; // Guarda temporalmente el análisis que estás viendo en detalle
 
-// cuenta cuantos analisis se hicieron en la sesion
-let contadorAnalisis = 0;
+// inicio de la app
+document.addEventListener("DOMContentLoaded", () => {
+	const nombreGuardado = localStorage.getItem("nombreUsuario"); // carga el nombre si exite si no devuelve null
 
-// 2 params mensaje: texto del prompt y opcionesValidas: array con respuestas aceptadas
-function validarRespuesta(mensaje, opcionesValidas) {
-	let respuesta = "";
-	//verifica si la respuesta está en el array
-	while(!opcionesValidas.includes(respuesta)) {
-		respuesta = prompt(mensaje);
-	//El loop continúa hasta que sea válida
-		if(respuesta === null || respuesta === "") {
-			alert("⚠️ Debes responder esta pregunta para continuar.");
-			respuesta = ""; // reinicio la respuesta "" para q while siga preguntando
-		} else {
-			respuesta = respuesta. toLocaleLowerCase().trim();
-			
-			//nuevamente valida si está en las opciones válidas
-			if(!opcionesValidas.includes(respuesta)) {
-				//opciones separadas por " o "
-				alert(`❌ Respuesta inválida. Por favor escribe: ${opcionesValidas.join(' o ')}`)
-			}
-		}
-
+	if (nombreGuardado) {
+		document.getElementById("inputNombre").value = nombreGuardado; // si encontro un nombre lo pone en el input
 	}
 
-	return respuesta // Devuelve la respuesta válida
-}
-
-// find busca el 1er elemento del array que cumpla la condición, 
-// puntos >= nivel.min verifica si los puntos obtenidos son mayores o iguales al mínimo requerido
-// Resultado → un objeto con { min, conclusion, nivel } listo para usar.
-function obtenerNivelRiesgo(puntos) {
-	return nivelesRiesgo.find(nivel => puntos >= nivel.min);
-}
-
-// FUNCION 1 : Inicia el analisis (junta los datos)
-function iniciarAnalisis() {
-	console.log("=== DETECTOR DE ESTAFAS LABORALES ===\n");
-
-	// busca nombre en localStorage sino existe null
-	let nombreUsuario = localStorage.getItem("nombreUsuario");
-
-	console.log("🔍 Buscando nombre en localStorage...");
-	console.log(`Resultado: ${nombreUsuario}`); // muestra que encontro
-
-	// si no encontro nada
-	if (nombreUsuario === null || nombreUsuario === "") {
-		console.log("❌ No se encontró ningun nombre guardado.");
-
-		// 1. pedimos el nombre
-		nombreUsuario = prompt("👋 ¡Bienvenido a ANTI SCAM!\n\n¿Cómo te llamas?");
-
-		// 2. validamos - usuario cancelo o no escribio nada
-		if (nombreUsuario === null || nombreUsuario.trim() === "") {
-			console.log("⚠️ nombre de usuario no proporcionado.");
-			alert("Necesitamos tu nombre para poder continuar 😊");
-			return; // DETIENE la función, no continúa sin un nombre
-		}
-
-		// 3. guardamos en localStorage
-		nombreUsuario = nombreUsuario.trim(); //sacamos los espacios
-		localStorage.setItem("nombreUsuario", nombreUsuario);
-		console.log(`✅ Sesión actualizada con el nombre de usuario: ${nombreUsuario}`);
-		alert(`✅ Tu nombre ha sido guardado.`);
-	} else {
-		// ya existia el nombre
-		console.log(`✅ Nombre de usuario encontrado en sesión: ${nombreUsuario}`);
+	const historialGuardado = localStorage.getItem("historialAnalisis"); //busca el historial guardado
+	if (historialGuardado) {
+		// si no hay nada guardado salta este bloque
+		historialAnalisis = JSON.parse(historialGuardado); //Convierte un string a objeto/array
+		contadorAnalisis = historialAnalisis.length; // cuenta cuantos analisis hay
 	}
 
-	console.log(`\n=== Hola ${nombreUsuario}, bienvenido al DETECTOR DE ESTAFAS LABORALES ===\n`);
-	alert(`¡Hola ${nombreUsuario}! 👋\n\nVamos a analizar las ofertas laborales.`);
+	configurarBotonesOpcion(); // quiero q los btn funcionen desde el inicio
+});
 
-	// el contador va incrementando cada vez que inicia un analisis
-	contadorAnalisis++;
-	console.log(`Análisis #${contadorAnalisis}`); //muestra analisis 1, 2,3
-	console.log("Por favor, responde las siguientes preguntas sobre la oferta laboral.\n");
+//(pantalla 1)
+function iniciarSesion() {
+	//busco el input
+	const inputNombre = document.getElementById("inputNombre");
+	const errorNombre = document.getElementById("errorNombre");
+	const nombre = inputNombre.value.trim(); // obtiene lo q el usuario escribio
 
-	let nombreEmpresa = "";
-	while (nombreEmpresa.trim() === "") { // si esta vacio sigue preguntando
-		nombreEmpresa = prompt("📋 Nombre de la empresa:");
-		
-		if (nombreEmpresa === null) {
-			alert("⚠️ Necesitamos el nombre de la empresa para continuar.");
-			nombreEmpresa = "";
-		} else if (nombreEmpresa.trim() === "") {
-			alert("⚠️ Por favor escribe el nombre de la empresa.");
-		}
-	}
-	nombreEmpresa = nombreEmpresa.trim();
-	console.log(`📋 Empresa: ${nombreEmpresa}\n`);
-
-
-
-	// confirm() para ? de si/OK = true o no/CANCEL = false
-	let solicitanDinero = confirm("¿La oferta solicita algún pago o inversión inicial?");
-	let salarioAlto = confirm("¿El salario ofrecido es más alto que el promedio del mercado?");
-	let pidenDatosBancarios = confirm("¿Te pidieron datos bancarios antes de una entrevista?");
-	
-	//usa la funcion validarRespuesta() con includes()
-	let tipoEmail = validarRespuesta("¿Qué tipo de email utilizan?\n(escribe: 'corporativo' o 'personal')",['corporativo', 'personal']);
-
-	let tieneWebOficial = validarRespuesta("¿La empresa tiene página web oficial?\n(escribe: 'si' o 'no')",['si', 'no']);
-
-	let aplicasteVos = confirm("¿Aplicaste vos mismo a esta oferta o te llegó sin solicitarla?");
-	let chequeEquipo = confirm("¿Te mencionaron que te enviarian un cheque para comprar equipo/software?");
-	let tieneLinkedIn = confirm("¿La empresa tiene presencia verificable en LinkedIn?");
-
-	//Guardamos toda la info ⬇️ en un objeto que agrupa los datos relacionados
-	let datosOfertaLaboral = {
-		nombreEmpresa: nombreEmpresa,
-		solicitanDinero: solicitanDinero,
-		salarioAlto: salarioAlto,
-		pidenDatosBancarios: pidenDatosBancarios,
-		tipoEmail: tipoEmail,
-		tieneWebOficial: tieneWebOficial,
-		aplicasteVos: aplicasteVos,
-		chequeEquipo: chequeEquipo,
-		tieneLinkedIn: tieneLinkedIn,
-		numeroAnalisis: contadorAnalisis,
-	};
-
-	console.log("\n--- Datos Recopilados ---");
-	console.log(datosOfertaLaboral);
-
-	procesarAnalisis(datosOfertaLaboral); // envio ese objeto a la funcion 2
-}
-
-// FUNCION 2 : recibe los datos, calcula puntos, detecta alertas , guarda el historial
-function procesarAnalisis(datos) {
-	// recibo el objeto como datos
-
-	console.log("\n===  ⚙️ PROCESANDO ANÁLISIS ===\n");
-
-	//Filter => recorre cada objeto del array redFlags, ejecuta la funcion evaluar datos de c/u que devuelve true/false,
-	// true lo incluye en el objeto sino lo descarta y devuelve un nuevo array solo con los true
-	// alertasActivadas => tiene solo las red flags q se cumplieron
-	const alertasActivadas = redFlags.filter(flag => flag.evaluar(datos));
-
-	//Map => Recorre cada objeto de alertasActivadas, toma SOLO la propiedad mensaje, Crea un NUEVO array solo con los mensajes ["⚠️...", "⚠️..."]
-	const alertasDetectadas = alertasActivadas.map(flag => flag.mensaje)
-
-	//Reduce => Suma puntos , Func con 2 parms: total → El acumulador , flag → El objeto actual del array (puntos)
-	//Suma el total actual + los puntos del objeto , Devuelve la suma final
-	const puntosRiesgo = alertasActivadas.reduce((total,flag) => total + flag.puntos, 0);
-
-	//FOREACH() - Muestra cada alerta en consola
-	alertasActivadas.forEach(flag => { 
-		console.log(`❌ Señal de alerta: ${flag.mensaje.replace('⚠️ ', '')} (+${flag.puntos} puntos de riesgo)`);
-	})
-
-	//despues de evaluar todo muestro el total de puntos acumulados
-	console.log(`\n📊 Total de puntos de riesgo: ${puntosRiesgo}`);
-
-	//Guardamos el resultado en el historial ⬇️
-	let resultadoAnalisis = {
-		numeroAnalisis: datos.numeroAnalisis, // x oferta = Análisis #1
-		nombreEmpresa: datos.nombreEmpresa,
-		puntosRiesgo: puntosRiesgo, // guardo total de puntos acumulados
-		alertasDetectadas: alertasDetectadas, // guardamos todas las alertas
-		fecha: new Date().toLocaleString(), // crea objeto con fecha/hora actual y lo convierto a texto legible
-	};
-
-	//agregamos ese resultado ⬆️ y queda guardado
-	historialAnalisis.push(resultadoAnalisis);
-
-	// Llamamos a la función 3 que muestra los resultados y pasamos el objeto a la func 3 ⬇️
-	mostrarResultados(puntosRiesgo, alertasDetectadas, datos.nombreEmpresa); //recibe puntos y alertas⬇️
-}
-
-// FUNCION 3 : muestra el resultado/mensaje final al usuario
-function mostrarResultados(puntos, alertas, nombreEmpresa) {
-	console.log("\n=== RESULTADO DEL ANÁLISIS ===\n");
-
-	const nivelInfo = obtenerNivelRiesgo(puntos);
-
-	console.log(`📋 Empresa: ${nombreEmpresa}`);
-	console.log(`${nivelInfo.conclusion}`);
-	console.log(`Nivel de riesgo: ${nivelInfo.nivel}`);
-	console.log(`Puntos de riesgo: ${puntos}/185\n`);
-
-	// mostramos todas las alertas detectadas
-	if (alertas.length > 0) {
-		// si tiene al menos 1 elemento muestro alertas
-		console.log("Señales de alerta detectadas:");
-		alertas.forEach((alerta, index) => {
-			console.log(`${index + 1}. ${alerta}`)
-		});
-	} else {
-		console.log("✓ No se detectaron señales de alerta obvias.");
-	}
-
-	let mensajeAlerta =
-		`📋 Empresa: ${nombreEmpresa}\n\n` + 
-		nivelInfo.conclusion +
-		"\n\n" +
-		"Nivel de riesgo: " +
-		nivelInfo.nivel +
-		"\n" +
-		"Puntos: " +
-		puntos +
-		"/185\n\n";
-
-	if (alertas.length > 0) {
-		// si hay alertas cuantas hay
-		mensajeAlerta += "Alertas detectadas: " + alertas.length + "\n\n"; // numero de elementos en el []
-		mensajeAlerta += "Revisa la consola para mas detalles.";
-	}
-
-	//muestra el mensaje de alerta / resultado final
-	alert(mensajeAlerta);
-
-	// preguntamos si quiere ver el historial o hacer otro analisis , llamo a la fun 4
-	mostrarOpciones();
-}
-
-// FUNCION 4 : Menú con 3 opciones
-function mostrarOpciones() {
-	console.log("\n--- Opciones ---");
-
-	let opcion = prompt(
-		"¿Qué te gustaría hacer?\n1 - Analizar otra oferta\n2 - Ver el historial\n3 - Cerrar sesión\n4 - Salir\n\nEscribe el número:",
-	);
-
-	const opcionesValidas = ['1', '2', '3', '4'];
-	
-	// Valida antes de ejecutar 
-	if(!opcionesValidas.includes(opcion)) {
-		alert("Opción no válida. Cerrando el analizador.");
-		console.log("❌ Opción no válida.");
+	if (nombre === "") {
+		// valido q no este vacio
+		errorNombre.style.display = "block"; // si no hay nombre mostar error
+		inputNombre.focus();
 		return;
 	}
 
-		switch(opcion) {
-		case '1':
-			iniciarAnalisis();
-			break;
-		case '2':
-			mostrarHistorial();
-			break;
-		case '3':
-			cerrarSesion();
-			break;
-		case '4':
-			console.log("\n✓ Gracias por usar ANTI SCAM.\n¡No te dejes engañar por ofertas de trabajo falsas!");
-			alert("Gracias por usar ANTI SCAM.\n\n¡Mantén a salvo tu información y tus finanzas!");
-			break;
-	}
+	errorNombre.style.display = "none"; // nombre valido oculta error
+
+	localStorage.setItem("nombreUsuario", nombre); // guardo el nombre en el localStorage
+
+	document.getElementById("saludoUsuario").textContent =
+		`¡Hola ${nombre}! Responde las siguientes preguntas:`; // pongo el saludo al user en pantalla 2
+
+	// llamo a la func q cambia pantalla y paso el id de la pantalla q quiero mostrar
+	mostrarPantalla("pantallaFormulario"); 
 }
 
-// FUNCION 5: Cerrar sesion
-
-function cerrarSesion() {
-	console.log("\n=== CERRANDO SESIÓN ===\n");
-	let nombreUsuario = localStorage.getItem("nombreUsuario");
-
-	// verificamos si existe un nombre guardado
-	if (nombreUsuario === null || nombreUsuario === "") {
-		alert("⚠️ No hay ninguna sesión activa para cerrar.");
-		mostrarOpciones();
-		return;
-	}
-
-	let confirmar = confirm(`¿Deseas cerrar sesión?\n\nSe eliminará tu información de este navegador.`);
-
-	if (confirmar) {
-		localStorage.removeItem("nombreUsuario");
-		console.log(`✅ Sesión cerrada correctamente.`);
-		alert(`Hasta luego, ${nombreUsuario}.\n\nTu información ya no aparecerá en este navegador.`);
-
-		console.log("\n✓ Gracias por usar ANTI SCAM.\n¡No te dejes engañar por ofertas de trabajo falsas!");
-		alert("Gracias por usar ANTI SCAM.\n\n¡Mantén a salvo tu información y tus finanzas!");
-	} else {
-		// si no confirma , no borramos nada
-		console.log("ℹ️ Cierre de sesión cancelado por el usuario.");
-		alert("Tu sesión sigue activa ✅.");
-		mostrarOpciones();
-	}
-}
-
-// FUNCION 6 : Lista de todos los analisis
-function mostrarHistorial() {
-	console.log("\n=== HISTORIAL DE ANÁLISIS ===\n");
-
-	// verificamos si hay analisis guardados
-	if (historialAnalisis.length === 0) {
-		console.log("Aún no se ha realizado ningún análisis");
-		alert("Todavía no has hecho ningún análisis en esta sesión.");
-		mostrarOpciones(); //volvemos al menu
-		return; //salimos de la funcion
-	}
-
-	//recorremos cada analisis guardado
-	historialAnalisis.forEach(analisis => {
-		console.log(`Análisis #${analisis.numeroAnalisis} - 📋 ${analisis.nombreEmpresa}`); // cant de analisis por sesion
-		console.log(`Fecha: ${analisis.fecha}`);
-		console.log(`Puntos de riesgo: ${analisis.puntosRiesgo}/185`);
-		console.log(`Alertas detectadas: ${analisis.alertasDetectadas.length}`);
-		console.log("---");
-
+//(pantalla 1) oculta todas las pantallas, muestra solo la activa
+function mostrarPantalla(idPantalla) {
+	document.querySelectorAll(".pantalla").forEach((p) => {
+		p.classList.remove("activa");
 	});
 
-	// recorre cada analisis del historial y devuelve un nuevo array y length cuenta los elementos
-	const analisisRiesgoAlto = historialAnalisis.filter(a => a.puntosRiesgo >= 60).length;
-	const analisisRiesgoBajo = historialAnalisis.filter(a => a.puntosRiesgo < 20).length;
-
-	let mensajeEstadisticas = `Se han realizado ${historialAnalisis.length} análisis en esta sesión.`;
-	
-	if (analisisRiesgoAlto > 0) {
-		mensajeEstadisticas += `\n\n⚠️ ADVERTENCIA: ${analisisRiesgoAlto} oferta(s) de RIESGO MUY ALTO detectada(s).`;
-	}
-	
-	if (analisisRiesgoBajo === historialAnalisis.length) {
-		mensajeEstadisticas += `\n\n✅ Todas tus ofertas parecen seguras.`;
-	}
-
-	mensajeEstadisticas += `\n\nRevisa la consola para ver los detalles completos.`;
-
-	alert(`Se han realizado ${historialAnalisis.length} análisis en esta sesión.\n\nRevisa la consola para ver los detalles completos.`);
-
-	mostrarOpciones(); // Volvemos al menú
+	// busca la pantalla especifica q le pase y le agrego la clase solo para q esa pantalla sea visible
+	document.getElementById(idPantalla).classList.add("activa");
 }
+
+//(pantalla 2) selecciona todos los botones, agrego evento click a c/u, guardo las respuestas en datosOfertaActual
+function configurarBotonesOpcion() {
+	document.querySelectorAll(".btn-opcion").forEach((btn) => {
+		btn.addEventListener("click", function () {
+			const pregunta = this.dataset.pregunta; // lee el atributo cuando hago click pregunta = "solicitanDinero"
+			const valor = this.dataset.valor; // si / no valor = "true"
+
+			document
+				.querySelectorAll(`[data-pregunta="${pregunta}"]`)
+				.forEach((b) => {
+					// Busca elementos que tengan exactamente ese atributo: [data-pregunta="solicitanDinero"]
+					b.classList.remove("seleccionado"); // Quitar la clase "seleccionado" de TODOS los botones del mismo grupo.
+				});
+
+			this.classList.add("seleccionado"); // Agrega la clase al btn clickeado. DESPUÉS del click = btn-opcion seleccionado
+
+			//  guarda la pregunta dataset SIEMPRE devuelve strings, no booleano asi los convierto
+			if (valor === "true") {
+				datosOfertaActual[pregunta] = true; // asi guardo
+			} else if (valor === "false") {
+				datosOfertaActual[pregunta] = false;
+			} else {
+				datosOfertaActual[pregunta] = valor; // Si es otra cosa ("corporativo", "si", "no"), dejar como string
+			}
+		});
+	});
+}
+
+//(pantalla 2) Calcula y actualiza barra (11%, 22%, 33%...)
+function actualizarProgreso() {
+	const porcentaje = (preguntaActualNum / 10) * 100; //(5 / 10) * 100 = 50%  → Barra al 50% style="width: 50%"
+	document.getElementById("progresoFill").style.width = porcentaje + "%";
+}
+
+//(pantalla 2)
+function siguientePregunta() {
+
+	// SECCIÓN 1: Validar Pregunta 1 (input de texto)
+
+	if (preguntaActualNum === 1) {
+		const empresa = document.getElementById("inputEmpresa").value.trim();
+
+		if (empresa === "") {
+			mostrarError("pregunta1", "⚠️ Por favor ingresa el nombre de la empresa");
+			return;
+		}
+
+		datosOfertaActual.nombreEmpresa = empresa; //guarda el nombre de la empresa => lo guarda en datosOfertaActual.nombreEmpresa
+
+		// SECCIÓN 2: Validar Preguntas 2-10 (botones)
+
+	} else {
+		// js evalúa el template literal => `pregunta${preguntaActualNum}`/ `pregunta${5}`// Reemplaza la variable con su valor => El string "pregunta5"
+		const preguntaActual = document.getElementById(
+			`pregunta${preguntaActualNum}`,
+		);
+		 //Busca SOLO los botones DENTRO de esa pregunta, si preg 5 => busca solo en <div id="pregunta5">
+		const botonesGrupo = preguntaActual.querySelectorAll(".btn-opcion");
+
+		// Array.from() lo convierte en un array real, some = algun btn cumple con la condicion T o F ?
+		const haySeleccion = Array.from(botonesGrupo).some( 
+			(btn) => btn.classList.contains("seleccionado"), // alguno de los 2 tiene la clase btn-opcion seleccionado?
+		);
+
+		if (!haySeleccion) {
+			mostrarError(
+				`pregunta${preguntaActualNum}`,
+				"⚠️ Por favor selecciona una opción",
+			);
+			return;
+		}
+	}
+
+	// SECCIÓN 3: Oculta la pregunta que acabas de responder
+
+	document.getElementById(`pregunta${preguntaActualNum}`).style.display =
+		"none";
+
+	// SECCIÓN 4: Aavanza preguntaActualNum = 2, ++ => ahora es 3
+
+	preguntaActualNum++; 
+
+	// SECCIÓN 5: Mostrar siguiente pregunta O procesar
+
+	if (preguntaActualNum <= 10) {
+		document.getElementById(`pregunta${preguntaActualNum}`).style.display = "block";
+
+		// Actualizar texto "Pregunta X de 10"
+		document.getElementById("preguntaActual").textContent = preguntaActualNum;
+
+		actualizarProgreso();
+
+		document.getElementById("btnAnterior").style.display = "block"; // a partir de la preg 2 muestra btn anterior
+
+		if (preguntaActualNum === 10) {
+			// solo si es preg 10
+			const btnSiguiente = document.getElementById("btnSiguiente");
+			btnSiguiente.classList.add("finalizar");
+			document.getElementById("textoSiguiente").textContent = "Analizar"; // Cambia el texto de "Siguiente" a "Analizar"
+			document.getElementById("flechaSiguiente").textContent = "✓";
+		}
+	} else {
+		procesarAnalisis(); // ya respondió las 10, entonces procesa el análisis (calcula el resultado)
+	}
+}
+
+//(pantalla 2) // lo opuesto a siguientePregunta()
+function anteriorPregunta() {
+	document.getElementById(`pregunta${preguntaActualNum}`).style.display = "none";
+
+	preguntaActualNum--; //retrocede Resta 1
+
+	document.getElementById(`pregunta${preguntaActualNum}`).style.display = "block"; // muestra la pre anterior
+
+	document.getElementById("preguntaActual").textContent = preguntaActualNum;
+
+	actualizarProgreso();
+
+	if (preguntaActualNum === 1) {
+		//si volvemos a la pregunta 1 el btn anterior se oculta
+		document.getElementById("btnAnterior").style.display = "none";
+	}
+
+	const btnSiguiente = document.getElementById("btnSiguiente");
+	btnSiguiente.classList.remove("finalizar"); // Quita la clase "finalizar" y restaura texto a siguiente
+	document.getElementById("textoSiguiente").textContent = "Siguiente";
+}
+
+//(pantalla 2)
+function mostrarError(idPregunta, mensaje) {
+	const pregunta = document.getElementById(idPregunta);
+
+	let errorDiv = pregunta.querySelector(".error-message"); // busca si ya existe un div de error sino lo creo
+
+	if (!errorDiv) {
+		errorDiv = document.createElement("p");
+		errorDiv.className = "error-message";
+		pregunta.appendChild(errorDiv);
+	}
+
+	errorDiv.textContent = mensaje;
+	errorDiv.style.display = "block";
+
+	setTimeout(() => {
+		errorDiv.style.display = "none";
+	}, 3000);
+}
+
+// Toma todas las respuestas y calcula el nivel de riesgo
+//(pantalla 3)
+function procesarAnalisis() {
+
+	// PASO 1: Incremento el contador
+	contadorAnalisis++; //  Incrementa el n. de anlisis
+	datosOfertaActual.numeroAnalisis = contadorAnalisis; // guardo n de analisis en el {}
+
+	//paso 2 FILTRO: recorre todas las red f. , ejecuta la func. evaluar de cada 1, si T lo pone en el resultado sino descarta
+	const alertasActivadas = redFlags.filter((flag) =>
+		flag.evaluar(datosOfertaActual),
+	);
+
+	// paso 3 MAP: extraigo solo lo necesario, crea un nuevo [] con 3 props, no necesito la func evaluar
+	const alertasConGravedad = alertasActivadas.map((flag) => ({
+		mensaje: flag.mensaje,
+		gravedad: flag.gravedad,
+		puntos: flag.puntos,
+	}));
+
+	//paso 4 SUMO los puntos de todas las alertas activadas , va acumulando it1 0 + 30 = it2 30 + 25
+	const puntosRiesgo = alertasActivadas.reduce(
+		(total, flag) => total + flag.puntos,
+		0,
+	);
+
+	//paso 5 FIND: obtener nivel de riesgo, busca el 1er nivel q cumpla la condicion => (60, 40, 20, 0), para cuando entra en el primero q cumple
+	const nivelInfo = nivelesRiesgo.find((nivel) => puntosRiesgo >= nivel.min);
+
+	// paso 6: creo un objeto con todos los datos para mostrar en pantalla y en detalle y lo guardo en el historial
+	const resultadoAnalisis = {
+		numeroAnalisis: contadorAnalisis,
+		nombreEmpresa: datosOfertaActual.nombreEmpresa,
+		puntosRiesgo: puntosRiesgo,
+		alertasDetectadas: alertasConGravedad,
+		nivelRiesgo: nivelInfo.nivel,
+		nivelClase: nivelInfo.clase,
+		conclusion: nivelInfo.conclusion,
+		fecha: new Date().toLocaleString(),
+		// copia exacta del obj xq desp vaciamos datosOfertaActual para un nuevo analisis , si no hacemos copia perdemos los datos del analisis anterior
+		datosCompletos: { ...datosOfertaActual },
+	};
+
+	//paso 7: Guardo en historial
+	historialAnalisis.push(resultadoAnalisis);
+
+	// convierto a JSON , guardo en LS (solo guarda strigs) , stringify convierte el array a string
+	localStorage.setItem("historialAnalisis", JSON.stringify(historialAnalisis));
+
+	//paso 8 llama a la func q llena la pantalla de resultados, le pasa el obj con todos los datos
+	mostrarResultados(resultadoAnalisis);
+}
+
+//(pantalla 3) llena html
+function mostrarResultados(resultado) {
+	// muestro nombre de la empresa
+	document.getElementById("resultadoEmpresa").textContent =
+		resultado.nombreEmpresa;
+
+	//mostrar nivel de riesgo
+	const nivelDiv = document.getElementById("resultadoNivel");
+	nivelDiv.textContent = resultado.conclusion;
+	nivelDiv.className = `nivel-badge ${resultado.nivelClase}`; // cambio su clase "nivel-badge nivel-alto"
+
+	// Mostrar puntos
+	const porcentajePuntos = (resultado.puntosRiesgo / 215) * 100;
+
+	document.getElementById("resultadoPuntos").innerHTML = `
+        <div style="font-size: 3.5rem;">${resultado.puntosRiesgo}</div>
+        <div style="font-size: 1.2rem; color:  rgba(255,255,255,0.85); margin-top: 5px;">de 215 puntos</div>
+    `;
+
+	document.getElementById("puntosFill").style.width = porcentajePuntos + "%";
+	
+	// mostrar alertas
+	const alertasDiv = document.getElementById("resultadoAlertas");
+
+	// verifico si hay alertas
+	// Recorre cada alerta y convierte c/u en 1 string y join une los strings
+	if (resultado.alertasDetectadas.length > 0) {
+		const alertasHTML = resultado.alertasDetectadas
+			.map(
+				(alerta, index) => `
+            <div class="alerta-item alerta-${alerta.gravedad}">
+                <strong>${index + 1}.</strong> ${alerta.mensaje}
+                <span style="float: right; color: #8899a6;">${alerta.puntos} pts</span>
+            </div>
+        `,
+			)
+			.join("");
+		alertasDiv.innerHTML = `
+        <h3>🚨 Alertas detectadas (${resultado.alertasDetectadas.length}):</h3>
+        ${alertasHTML}
+    `;
+	} else {
+		// Si NO hay alertas, muestro mensaje positivo
+		alertasDiv.innerHTML = `
+        <div style="text-align: center; padding: 30px; color: #00ba88; font-size: 1.3rem;">
+            ✅ No se detectaron señales de alerta obvias
+        </div>
+    `;
+	}
+
+	mostrarPantalla("pantallaResultados");
+}
+
+//(pantalla 4)
+// Al hacer clic en "Continuar" en resultados cambia a la pantalla del menu (3 opciones :nuevoAnalisis,verHistorial y cerrarSesion)
+function mostrarMenu() {
+	mostrarPantalla("pantallaMenu");
+}
+
+//(pantalla 4) resetea formulario
+function nuevoAnalisis() {
+	// 1.reseteo datos
+	datosOfertaActual = {};
+	preguntaActualNum = 1;
+
+	document.getElementById("inputEmpresa").value = ""; // 2.limpio input empresa
+
+	document.querySelectorAll(".btn-opcion").forEach((btn) => {
+		// 3.saco la clase "seleccionado" de todos los botones se ve sin marcar 
+		btn.classList.remove("seleccionado");
+	});
+
+	document.querySelectorAll(".pregunta").forEach((p, index) => {
+		// 4. Resetear visibilidad de preguntas
+		p.style.display = index === 0 ? "block" : "none"; //Si index === 0 → "block" (visible) sino oculto, solo pregunta 1 visible
+
+		const error = p.querySelector(".error-message"); // Busco mensajes de error y si existen los oculto
+		if (error) error.style.display = "none";
+	});
+	// 5. Resetear UI
+	document.getElementById("preguntaActual").textContent = "1";
+	document.getElementById("btnAnterior").style.display = "none"; // oculto btn anterior
+	document.getElementById("btnSiguiente").classList.remove("finalizar");
+	document.getElementById("textoSiguiente").textContent = "Siguiente";
+	actualizarProgreso(); //Barra de progreso al 10%
+
+	mostrarPantalla("pantallaFormulario"); // volvemos a la pantalla del formulario
+}
+
+//(pantalla 4) cierro sesion y elimino datos
+function cerrarSesion() {
+	const nombreUsuario = localStorage.getItem("nombreUsuario");
+
+	if (!nombreUsuario) {
+		alert("⚠️ No hay ninguna sesión activa para cerrar.");
+		mostrarMenu();
+		return;
+	}
+
+	const confirmar = confirm(
+		`🔒 ¿Deseas cerrar sesión?\n\nSe eliminará:\n• Tu nombre (${nombreUsuario})\n• Historial de ${historialAnalisis.length} análisis\n\n¿Continuar?`,
+	);
+
+	// limpio localS
+	if (confirmar) {
+		localStorage.removeItem("nombreUsuario");
+		localStorage.removeItem("historialAnalisis");
+
+		// reseteo las variables donde se acumulan los datos
+		historialAnalisis = [];
+		contadorAnalisis = 0;
+		datosOfertaActual = {};
+		preguntaActualNum = 1;
+
+		// limpio formularios
+		document.getElementById("inputNombre").value = "";
+		document.getElementById("inputEmpresa").value = "";
+
+		//Quitar selecciones de los btns
+		document.querySelectorAll(".btn-opcion").forEach((btn) => {
+			btn.classList.remove("seleccionado");
+		});
+
+		// reseteo preguntas
+		document.querySelectorAll(".pregunta").forEach((p, index) => {
+			p.style.display = index === 0 ? "block" : "none";
+		});
+
+		document.getElementById("btnAnterior").style.display = "none";
+		document.getElementById("preguntaActual").textContent = "1";
+		actualizarProgreso();
+
+		alert(`👋 Hasta luego, ${nombreUsuario}!\n\nTu información ha sido eliminada correctamente.`,);
+
+		mostrarPantalla("pantallaBienvenida");
+	} else {
+		// si el usuario cancela no hago nada
+	}
+}
+
+// (pantalla 5)
+function mostrarHistorial() {
+	const historialContainer = document.getElementById("historialContainer");
+	const estadisticas = document.getElementById("estadisticasHistorial");
+
+	if (historialAnalisis.length === 0) {
+		// si no hay analisis
+		historialContainer.innerHTML = `
+            <div style="text-align: center; padding: 60px 20px; color: #8899a6;">
+                <div style="font-size: 4rem; margin-bottom: 20px;">📭</div>
+                <p style="font-size: 1.2rem;">No has realizado ningún análisis todavía</p>
+            </div>
+        `;
+
+		estadisticas.innerHTML = "";
+	} else {
+		// si hay analisis // calcula estadisticas
+
+		const riesgoAlto = historialAnalisis.filter(
+			(a) => a.puntosRiesgo >= 60,
+		).length; // filtra los mayores o = a 60
+		const riesgoBajo = historialAnalisis.filter(
+			(a) => a.puntosRiesgo < 20,
+		).length;
+
+		let mensajeEstadisticas = `<div class="estadisticas">
+            <p><strong>Total de análisis:</strong> ${historialAnalisis.length}</p>`;
+
+		if (riesgoAlto > 0) {
+			// si hay advertencias de riesgo alto, agregar advertencia
+			mensajeEstadisticas += `<p style="color: #ef2133;">⚠️ ${riesgoAlto} oferta(s) de RIESGO MUY ALTO</p>`;
+		}
+
+		if (riesgoBajo === historialAnalisis.length) {
+			// si todas son de riesgo bajo
+			mensajeEstadisticas += `<p style="color: #00ba88;">✅ Todas tus ofertas parecen seguras</p>`;
+		}
+
+		mensajeEstadisticas += `</div>`;
+
+		estadisticas.innerHTML = mensajeEstadisticas;
+
+		// genero las cards de cada analisis
+		const analisisHTML = historialAnalisis
+			.slice() // crea una copia del array no modifico el original
+			.reverse() // inviero el orden muestro los + recientes primero
+			.map((analisis, index) => {
+				const indiceReal = historialAnalisis.length - 1 - index; //necesito el inidice en el array original no en el invertido
+				return `
+                    <div class="analisis-card" onclick="verDetalle(${indiceReal})">
+                        <div class="analisis-header">
+                            <span class="analisis-numero">Análisis #${analisis.numeroAnalisis}</span>
+                            <span class="analisis-fecha">${analisis.fecha}</span>
+                        </div>
+                        <div class="analisis-empresa">🏢 ${analisis.nombreEmpresa}</div>
+                        <div class="analisis-puntos">${analisis.puntosRiesgo} / 215</div>
+                        <span class="badge ${analisis.nivelClase.replace("nivel-", "badge-")}">${analisis.nivelRiesgo}</span>
+                        <p style="margin-top: 15px; color: #8899a6;">
+                            ${analisis.alertasDetectadas.length} alerta(s) detectada(s)
+                        </p>
+                    </div>
+                `;
+			})
+			.join('');
+
+			historialContainer.innerHTML = analisisHTML;
+	}
+	
+	mostrarPantalla('pantallaHistorial');
+}
+
+// (pantalla 6)
+function verDetalle(indice) {
+	analisisSeleccionado = historialAnalisis[indice];
+
+	const detalleContainer = document.getElementById('detalleContainer');
+
+	detalleContainer.innerHTML =  `
+        <div class="detalle-card">
+            <div class="empresa-header">
+                <span class="empresa-icono">🏢</span>
+                <h2>${analisisSeleccionado.nombreEmpresa}</h2>
+            </div>
+            <div class="nivel-badge ${analisisSeleccionado.nivelClase}">
+                ${analisisSeleccionado.conclusion}
+            </div>
+            <div class="puntos-container">
+                <div class="puntos-numero">
+                    ${analisisSeleccionado.puntosRiesgo} 
+                    <span style="font-size: 1.5rem;">/ 185</span>
+                </div>
+            </div>
+            <div style="margin: 30px 0;">
+                <h3 class="resultado text-center" style="margin-bottom: 15px; color: #e1e8ed;">📊 Información del análisis</h3>
+				<p style="color: #8899a6; margin: 8px 0; text-align: right;font-size:20px">Análisis #${analisisSeleccionado.numeroAnalisis}</p>
+                <p style="color: #8899a6; margin: 8px 0; text-align: right;"> ${analisisSeleccionado.fecha}</p>
+                
+            </div>
+            ${analisisSeleccionado.alertasDetectadas.length > 0 ? `
+                <div>
+                    <h3 style="margin-bottom: 15px; color: #e1e8ed;">
+                        🚨 Alertas detectadas (${analisisSeleccionado.alertasDetectadas.length})
+                    </h3>
+                    ${analisisSeleccionado.alertasDetectadas.map((alerta, i) => `
+                        <div class="alerta-item alerta-${alerta.gravedad}">
+                            <strong>${i + 1}.</strong> ${alerta.mensaje}
+                            <span style="float: right; color: #8899a6;">${alerta.puntos} pts</span>
+                        </div>
+                    `).join('')}
+                </div>
+            ` : `
+                <div style="text-align: center; padding: 30px; color: #00ba88; font-size: 1.2rem;">
+                    ✅ No se detectaron señales de alerta
+                </div>
+            `}
+        </div>
+    `;
+	mostrarPantalla('pantallaDetalle');
+}
+ // (pantalla 6)
+function volverHistorial() {
+	mostrarHistorial();
+ }
+

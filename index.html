@@ -10,11 +10,22 @@
 			href="https://fonts.googleapis.com/css2?family=Anton+SC&display=swap"
 			rel="stylesheet"
 		/>
+		<!-- Bootstrap CSS -->
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+		/>
+
+		<!-- Bootstrap Icons -->
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css"
+			rel="stylesheet"
+		/>
 		<title>ANTI SCAM ❌</title>
 	</head>
 	<body>
 		<!-- ========  PANTALLA 1: BIENVENIDA ========-->
-		<div id="pantallaBienvenida" class="pantalla-activa">
+		<div id="pantallaBienvenida" class="pantalla activa">
 			<div class="main">
 				<img src="./images/logo.svg" alt="logo" />
 				<h1 class="title">ANTI<span class="title-red"> SCAM</span></h1>
@@ -27,20 +38,259 @@
 				<div class="input-container">
 					<input
 						type="text"
-						id="input-nombre"
+						id="inputNombre"
 						placeholder="👋 ¿Cómo te llamas?"
 					/>
-					<p class="error-message" id="error-nombre">
+					<p class="error-message" id="errorNombre">
 						⚠️ Por favor ingresa tu nombre
 					</p>
-					<button class="title-cta" onclick="iniciarAnalisis()">
-						Analizar oferta
+					<button class="title-cta" onclick="iniciarSesion()">
+						Comenzar Análisis
 					</button>
 				</div>
 			</div>
 		</div>
 
-		
+		<!-- ========  PANTALLA 2: FORMULARIO PREGUNTAS =======-->
+		<div id="pantallaFormulario" class="pantalla">
+			<div class="contenedor-dark">
+				<div class="header-form">
+					<h1>📋 Análisis Oferta Laboral</h1>
+					<p class="saludo" id="saludoUsuario"></p>
+				</div>
+				<div class="progreso-barra">
+					<div class="progreso-fill" id="progresoFill"></div>
+				</div>
+
+				<p class="progreso-texto">
+					Pregunta <span id="preguntaActual">1</span> de 10
+				</p>
+
+				<div class="form-group pregunta" id="pregunta1">
+					<label>🏢 Nombre de la empresa</label>
+					<input type="text" id="inputEmpresa" placeholder="Ej: Google, Amazon..." class="input-dark"/>
+				</div>
+
+				<div class="form-group pregunta" id="pregunta2" style="display: none">
+					<label>💰 ¿La oferta solicita algún pago o inversión inicial?</label>
+					<small class="pregunta-info">
+    					🚩 Ningún trabajo legítimo te pedirá dinero para empezar.
+					</small>
+					<div class="btn-group">
+						<button class="btn-opcion" data-pregunta="solicitanDinero" data-valor="true">
+							Sí
+						</button>
+						<button class="btn-opcion" data-pregunta="solicitanDinero" data-valor="false">
+							No
+						</button>
+					</div>
+				</div>
+
+				<div class="form-group pregunta" id="pregunta3" style="display: none">
+					<label>💵 ¿El salario es más alto que el promedio?</label>
+					<small class="pregunta-info">
+    					🚩 Promesas de sueldos muy altos con pocos requisitos.
+					</small>
+					<div class="btn-group">
+						<button class="btn-opcion" data-pregunta="salarioAlto" data-valor="true">
+							Sí
+						</button>
+						<button class="btn-opcion" data-pregunta="salarioAlto" data-valor="false">
+							No
+						</button>
+					</div>
+				</div>
+
+				<div class="form-group pregunta" id="pregunta4" style="display: none">
+					<label>🏦 ¿Pidieron datos bancarios antes de entrevista?</label>
+					<small class="pregunta-info">
+    					🚩 Nunca compartas datos bancarios sin un proceso formal y verificado.
+					</small>
+					<div class="btn-group">
+						<button class="btn-opcion" data-pregunta="pidenDatosBancarios" data-valor="true">
+							Sí
+						</button>
+						<button class="btn-opcion" data-pregunta="pidenDatosBancarios" data-valor="false">
+							No
+						</button>
+					</div>
+				</div>
+
+				<div class="form-group pregunta" id="pregunta5" style="display: none">
+					<label>📧 ¿Qué tipo de email utilizan?</label>
+					<small class="pregunta-info">
+    					🚩 Empresas reales usan correos corporativos, no cuentas personales.
+					</small>
+					<div class="btn-group">
+						<button class="btn-opcion" data-pregunta="tipoEmail" data-valor="corporativo">
+							Corporativo
+						</button>
+						<button class="btn-opcion" data-pregunta="tipoEmail" data-valor="personal">
+							Personal
+						</button>
+					</div>
+				</div>
+
+				<div class="form-group pregunta" id="pregunta6" style="display: none">
+					<label>🌐 ¿Tiene página web oficial?</label>
+					<small class="pregunta-info">
+    					🚩 La ausencia de web es una señal de alerta importante.
+					</small>
+					<div class="btn-group">
+						<button class="btn-opcion" data-pregunta="tieneWebOficial" data-valor="si">
+							Sí
+						</button>
+						<button class="btn-opcion" data-pregunta="tieneWebOficial" data-valor="no">
+							No
+						</button>
+					</div>
+				</div>
+
+				<div class="form-group pregunta" id="pregunta7" style="display: none">
+					<label>📝 ¿Aplicaste vos mismo?</label>
+					<small class="pregunta-info">
+    					🚩 Ofertas inesperadas sin postulación previa pueden ser falsas.
+					</small>
+					<div class="btn-group">
+						<button class="btn-opcion" data-pregunta="aplicasteVos" data-valor="true">
+							Sí
+						</button>
+						<button class="btn-opcion" data-pregunta="aplicasteVos" data-valor="false">
+							No
+						</button>
+					</div>
+				</div>
+
+				<div class="form-group pregunta" id="pregunta8" style="display: none">
+					<label>💳 ¿Mencionaron enviarte un cheque?</label>
+					<small class="pregunta-info">
+						🚩 Envío de dinero o cheques falsos para pedir devolución.
+					</small>
+					<div class="btn-group">
+						<button class="btn-opcion" data-pregunta="chequeEquipo" data-valor="true">
+							Sí
+						</button>
+						<button class="btn-opcion" data-pregunta="chequeEquipo" data-valor="false">
+							No
+						</button>
+					</div>
+				</div>
+
+				<div class="form-group pregunta" id="pregunta9" style="display: none">
+					<label>💼 ¿Tiene presencia en LinkedIn?</label>
+					<small class="pregunta-info">
+						🚩 Empresas reales suelen tener perfiles activos y verificables.
+					</small>
+					<div class="btn-group">
+						<button class="btn-opcion" data-pregunta="tieneLinkedIn" data-valor="true">
+							Sí
+						</button>
+						<button class="btn-opcion" data-pregunta="tieneLinkedIn" data-valor="false">
+							No
+						</button>
+					</div>
+				</div>
+
+				<div class="form-group pregunta" id="pregunta10" style="display: none">
+					<label>⏱️ ¿Te contrataron sin entrevistas o demasiado rápido?</label>
+					<small class="pregunta-info">
+						🚩 Procesos sin entrevistas ni validaciones formales.
+					</small>
+					<div class="btn-group">
+						<button class="btn-opcion" data-pregunta="procesoRapido" data-valor="true">
+							Sí
+						</button>
+						<button class="btn-opcion" data-pregunta="procesoRapido" data-valor="false">
+							No
+						</button>
+					</div>
+				</div>
+
+				<div class="navegacion-btns">
+					<button
+						class="btn" id="btnAnterior" onclick="anteriorPregunta()" style="display: none">
+						← Anterior
+					</button>
+
+					<button class="btn btn-analizar" id="btnSiguiente" onclick="siguientePregunta()">
+						<span id="textoSiguiente">Siguiente</span>
+						<span id="flechaSiguiente">→</span>
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- ========  PANTALLA 3: RESULTADOS ANÁLISIS =======-->
+		<div id="pantallaResultados" class="pantalla">
+			<div class="contenedor-dark">
+				<h1 class="text-center resultado">📊 Resultado del Análisis</h1>
+				<div class="resultado-card">
+					<div class="empresa-header">
+						<span class="empresa-icono">🏢</span>
+						<h2 id="resultadoEmpresa"></h2>
+					</div>
+					<div class="nivel-badge" id="resultadoNivel"></div>
+					<div class="puntos-container">
+						<div class="puntos-numero" id="resultadoPuntos"></div>
+						<div class="puntos-barra">
+							<div class="puntos-fill" id="puntosFill"></div>
+						</div>
+					</div>
+					<div class="alertas-section" id="resultadoAlertas"></div>
+				</div>
+				<button class="btn btn-primary btn-block" onclick="mostrarMenu()">
+					Continuar
+				</button>
+			</div>
+		</div>
+
+		<!-- ========  PANTALLA 4: MENÚ PRINCIPAL =======-->
+		<div id="pantallaMenu" class="pantalla">
+			<div class="contenedor-dark">
+				<h1 class="text-center mb-30 resultado">¿Cómo quieres continuar?</h1>
+				<div class="menu-grid">
+					<button class="menu-card" onclick="nuevoAnalisis()">
+						<div class="menu-icono">🔍</div>
+						<h3>Nuevo análisis</h3>
+						<p>Revisa una nueva propuesta</p>
+					</button>
+					<button class="menu-card" onclick="mostrarHistorial()">
+						<div class="menu-icono">📜</div>
+						<h3>Ver historial</h3>
+						<p>Consulta tus análisis previos</p>
+					</button>
+					<button class="menu-card menu-card-danger" onclick="cerrarSesion()">
+						<div class="menu-icono">🔒</div>
+						<h3>Cerrar sesión</h3>
+						<p>Eliminar datos guardados</p>
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- ========  PANTALLA 5: HISTORIAL ANÁLISIS =======-->
+		<div id="pantallaHistorial" class="pantalla">
+			<div class="contenedor-dark">
+				<h1 class="text-center mb-30 resultado">📜 Historial de Análisis</h1>
+				<div id="estadisticasHistorial"></div>
+				<div class="historial-grid" id="historialContainer"></div>
+				<button
+					class="btn btn-secondary btn-block mt-30"
+					onclick="mostrarMenu()"
+				>
+					← Volver al menú
+				</button>
+			</div>
+		</div>
+
+		<!-- ========  PANTALLA 6: DETALLE DE UN ANÁLISIS =======-->
+		<div id="pantallaDetalle" class="pantalla">
+			<div class="contenedor-dark">
+				<button class="btn" onclick="volverHistorial()">← Volver</button>
+				<h1 class="text-center mb-30 resultado">Detalle del Análisis</h1>
+				<div id="detalleContainer"></div>
+			</div>
+		</div>
 
 		<script src="js/main.js"></script>
 	</body>
