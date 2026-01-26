@@ -370,7 +370,7 @@ function mostrarResultados(resultado) {
 	const porcentajePuntos = (resultado.puntosRiesgo / 215) * 100;
 
 	document.getElementById("resultadoPuntos").innerHTML = `
-        <div style="font-size: 3.5rem;">${resultado.puntosRiesgo}</div>
+        <div style="font-size: 3rem;">${resultado.puntosRiesgo}</div>
         <div style="font-size: 1.2rem; color:  rgba(255,255,255,0.85); margin-top: 5px;">de 215 puntos</div>
     `;
 
@@ -383,15 +383,17 @@ function mostrarResultados(resultado) {
 	// Recorre cada alerta y convierte c/u en 1 string y join une los strings
 	if (resultado.alertasDetectadas.length > 0) {
 		const alertasHTML = resultado.alertasDetectadas
-			.map(
-				(alerta, index) => `
-            <div class="alerta-item alerta-${alerta.gravedad}">
+    .map(
+        (alerta, index) => `
+        <div class="alerta-item alerta-${alerta.gravedad}">
+            <div class="alerta-mensaje">
                 <strong>${index + 1}.</strong> ${alerta.mensaje}
-                <span style="float: right; color: #8899a6;">${alerta.puntos} pts</span>
             </div>
-        `,
-			)
-			.join("");
+            <div class="alerta-puntos">${alerta.puntos} pts</div>
+        </div>
+    `,
+    )
+    .join("");
 		alertasDiv.innerHTML = `
         <h3>🚨 Alertas detectadas (${resultado.alertasDetectadas.length}):</h3>
         ${alertasHTML}
@@ -588,20 +590,22 @@ function verDetalle(indice) {
                 </div>
             </div>
             <div style="margin: 30px 0;">
-                <h3 class="resultado text-center" style="margin-bottom: 15px; color: #e1e8ed;">📊 Información del análisis</h3>
-				<p style="color: #8899a6; margin: 8px 0; text-align: right;font-size:20px">Análisis #${analisisSeleccionado.numeroAnalisis}</p>
-                <p style="color: #8899a6; margin: 8px 0; text-align: right;"> ${analisisSeleccionado.fecha}</p>
+                <h3 class="resultado text-center" style="margin-bottom: 15px; color: #e1e8ed;">📊 Información</h3>
+				<p  class="analisis-n" style="color: #8899a6; margin: 8px 0; text-align: right;font-size:20px">Análisis #${analisisSeleccionado.numeroAnalisis}</p>
+                <p  class="analisis-f" style="color: #8899a6; margin: 8px 0; text-align: right;"> ${analisisSeleccionado.fecha}</p>
                 
             </div>
             ${analisisSeleccionado.alertasDetectadas.length > 0 ? `
                 <div>
-                    <h3 style="margin-bottom: 15px; color: #e1e8ed;">
+                    <h3 style="margin-bottom: 25px; color: #e1e8ed;text-align: center">
                         🚨 Alertas detectadas (${analisisSeleccionado.alertasDetectadas.length})
                     </h3>
                     ${analisisSeleccionado.alertasDetectadas.map((alerta, i) => `
                         <div class="alerta-item alerta-${alerta.gravedad}">
-                            <strong>${i + 1}.</strong> ${alerta.mensaje}
-                            <span style="float: right; color: #8899a6;">${alerta.puntos} pts</span>
+                            <div class="alerta-mensaje">
+            					<strong>${i + 1}.</strong> ${alerta.mensaje}
+        					</div>
+							<div class="alerta-puntos">${alerta.puntos} pts</div>
                         </div>
                     `).join('')}
                 </div>
