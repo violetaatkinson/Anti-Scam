@@ -765,41 +765,63 @@ body {
 
 
     .navegacion-btns {
-        gap: 10px;
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+        margin-top: 30px !important;
+        width: 100%;
     }
 
     .navegacion-btns .btn {
-        padding: 12px 20px !important;
-        font-size: 0.95rem;
-        min-width: 110px;
-        flex: 1;
-        max-width: 48%;
-    }
-
-     #btnSiguiente,
-    #btnAnterior {
-        display: flex !important;
-        flex-direction: row !important; 
+        padding: 13px 10px !important;
+        font-size: 0.9rem !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        margin: 0 !important;
+        display: inline-flex !important;
+        flex-direction: row !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 6px !important;
+        gap: 5px !important;
+        text-align: center !important;
     }
 
+    #btnAnterior,
+    #btnSiguiente {
+        display: inline-flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+    }
 
+    #btnAnterior::before,
+    #btnAnterior::after,
+    #btnSiguiente::before,
+    #btnSiguiente::after {
+        content: none !important;
+        display: none !important;
+    }
+
+    #btnAnterior span,
     #btnSiguiente span,
-    #btnAnterior span {
-        display: inline !important;
-        white-space: nowrap;
-    }
-
     #flechaAnterior,
     #textoAnterior,
     #textoSiguiente,
     #flechaSiguiente {
         display: inline !important;
+        line-height: 1 !important;
+        vertical-align: middle !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        float: none !important;
+        position: static !important;
+    }
+
+    #btnAnterior br,
+    #btnSiguiente br {
+        display: none !important;
     }
 
 
