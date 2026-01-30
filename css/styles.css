@@ -176,7 +176,7 @@ body {
     font-family: "Raleway", sans-serif;
     font-weight: 500;
     letter-spacing: 1px;
-    color:#8899a6;
+    color: #8899a6;
 }
 
 .progreso-texto {
@@ -763,25 +763,55 @@ body {
         line-height: 32px;
     }
 
-     .navegacion-btns {
+
+    .navegacion-btns {
         gap: 10px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
     }
 
     .navegacion-btns .btn {
-        padding: 10px 18px !important;
-        font-size: 0.9rem;
-        min-width: 140px;
+        padding: 12px 20px !important;
+        font-size: 0.95rem;
+        min-width: 110px;
+        flex: 1;
+        max-width: 48%;
     }
+
+     #btnSiguiente,
+    #btnAnterior {
+        display: flex !important;
+        flex-direction: row !important; 
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+    }
+
+
+    #btnSiguiente span,
+    #btnAnterior span {
+        display: inline !important;
+        white-space: nowrap;
+    }
+
+    #flechaAnterior,
+    #textoAnterior,
+    #textoSiguiente,
+    #flechaSiguiente {
+        display: inline !important;
+    }
+
 
     .btn-group {
-        gap: 20px;                
+        gap: 20px;
     }
 
-      .btn-opcion {
-        padding: 12px 20px;      
-        font-size: 0.9rem;        
-        letter-spacing: 1px;    
-        white-space: nowrap;      
+    .btn-opcion {
+        padding: 12px 20px;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+        white-space: nowrap;
     }
 
     .empresa-header {
@@ -790,41 +820,41 @@ body {
         margin-bottom: 20px;
     }
 
-       .empresa-icono {
-        font-size: 1.8rem;        
+    .empresa-icono {
+        font-size: 1.8rem;
     }
 
-     .empresa-header h2 {
-        font-size: 1.8rem;        
+    .empresa-header h2 {
+        font-size: 1.8rem;
         text-align: center;
         letter-spacing: 0.5px;
     }
 
-     .nivel-badge {
-        font-size: 0.85rem;       
-        padding: 10px 12px;       
-        margin: 15px 0 12px 0;     
+    .nivel-badge {
+        font-size: 0.85rem;
+        padding: 10px 12px;
+        margin: 15px 0 12px 0;
         line-height: 1.3;
-        text-align: center;       
+        text-align: center;
     }
 
-      .puntos-numero {
+    .puntos-numero {
         font-size: 2.4rem;
         margin-bottom: 12px;
     }
 
-      .puntos-barra {
-        height: 8px;               
-        margin-top: 8px;          
+    .puntos-barra {
+        height: 8px;
+        margin-top: 8px;
     }
 
-     .alertas-section h3 {
+    .alertas-section h3 {
         font-size: 1rem;
         line-height: 1.4;
         margin-bottom: 12px;
     }
 
-     .alerta-item {
+    .alerta-item {
         font-size: 0.9rem;
         padding: 12px 14px 12px 18px;
         margin-bottom: 10px;
@@ -841,21 +871,21 @@ body {
         box-shadow: none;
     }
 
-      .alerta-item strong {
+    .alerta-item strong {
         font-size: 0.8rem;
         opacity: 0.7;
     }
 
-     .alerta-mensaje {
+    .alerta-mensaje {
         font-size: 0.9rem;
         line-height: 1.6;
         word-wrap: break-word;
-        flex: 1; 
+        flex: 1;
     }
 
     .alerta-item {
         font-size: 0.9rem;
-        padding: 12px 14px 12px 22px; 
+        padding: 12px 14px 12px 22px;
         margin-bottom: 10px;
         border-radius: 8px;
         word-wrap: break-word;
@@ -863,7 +893,7 @@ body {
         display: block;
     }
 
-     .alerta-puntos {
+    .alerta-puntos {
         display: flex;
         justify-content: flex-end;
         align-items: center;
@@ -890,15 +920,17 @@ body {
         flex-direction: column;
         text-align: center;
         padding: 20px 16px;
+        position: relative;
+        overflow: hidden;
     }
 
-      .analisis-empresa {
+    .analisis-empresa {
         text-align: center;
         font-size: 1.3rem;
         margin: 12px 0;
     }
 
-     .analisis-puntos {
+    .analisis-puntos {
         text-align: center;
         font-size: 1.8rem;
         margin: 15px 0;
@@ -906,14 +938,14 @@ body {
         font-weight: 700;
     }
 
-      .badge {
-        display: inline-block; 
+    .badge {
+        display: inline-block;
         padding: 7px 18px;
         border-radius: 999px;
         font-size: 0.75rem;
         font-weight: 700;
         letter-spacing: 1px;
-        margin: 10px auto;  
+        margin: 10px auto;
         backdrop-filter: blur(4px);
     }
 
@@ -930,8 +962,8 @@ body {
         text-align: center !important;
     }
 
-    .analisis-f{
-          text-align: center !important;
+    .analisis-f {
+        text-align: center !important;
     }
- 
+
 }
