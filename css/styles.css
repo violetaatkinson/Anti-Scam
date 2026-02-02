@@ -104,19 +104,6 @@ body {
     border-color: #FF3B3B;
 }
 
-.error-message {
-    background: rgba(239, 33, 51, 0.2);
-    color: rgba(255, 255, 255, 0.85);
-    border-left: 4px solid #ef2133;
-    font-family: "Raleway", sans-serif;
-    font-weight: 500;
-    font-size: 1rem;
-    letter-spacing: 1px;
-    padding: 12px;
-    margin-top: 20px;
-    display: none;
-    text-align: center;
-}
 
 .contenedor-dark {
     max-width: 800px;
@@ -309,18 +296,6 @@ body {
     transform: translateY(-2px);
 }
 
-.error-message {
-    background: rgba(239, 33, 51, 0.1);
-    color: #ef2133;
-    padding: 12px;
-    border-radius: 8px;
-    border-left: 4px solid #ef2133;
-    margin-top: 20px;
-    font-size: 0.95rem;
-    font-family: "Raleway", sans-serif;
-    letter-spacing: 1px;
-    display: none;
-}
 
 .resultado-card {
     background: #1a1f29;
@@ -742,6 +717,92 @@ body {
     100% {
         transform: translateY(0px);
     }
+}
+
+.swal2-popup {
+    background: #1a1f29 !important;
+    border: 1px solid #2a2f3a;
+    border-radius: 22px;
+    color: #e1e8ed;
+    font-family: "Raleway", sans-serif;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.55);
+}
+
+.swal2-title {
+    font-family: "Anton SC", sans-serif;
+    letter-spacing: 1px;
+    color: #e1e8ed;
+}
+
+.swal2-html-container {
+    color: #8899a6;
+    font-size: 1.05rem;
+    line-height: 1.6;
+}
+
+.swal2-icon.swal2-warning {
+    border-color: #ef2133;
+    color: #ef2133;
+}
+
+.swal2-confirm {
+    color: rgba(255, 255, 255, 0.85);
+    background: #ef2133;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 50px;
+    width: 90%;
+    padding: 12px 30px;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    font-weight: 600;
+    font-family: "Raleway", sans-serif;
+    cursor: pointer;
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+    animation: pulse-danger 2s infinite;
+}
+
+.swal2-confirm:hover {
+    background: #ff2e3f;
+    transform: translateY(-3px);
+    box-shadow:
+        0 10px 25px rgba(239, 33, 51, 0.55),
+        0 0 18px rgba(239, 33, 51, 0.35);
+}
+
+.swal2-cancel {
+    font-size: 1rem;
+    letter-spacing: 1px;
+    font-weight: 600;
+    font-family: "Raleway", sans-serif;
+    width: 90%;
+    text-transform: uppercase;
+    background: #2a2f3a !important;
+    color: #e1e8ed !important;
+    border-radius: 999px !important;
+    padding: 12px 30px !important;
+    margin-bottom: 20px;
+    cursor: pointer;
+    transition:
+        transform 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+    opacity: 0.9;
+}
+
+.swal2-cancel:hover {
+    background: #323846 !important;
+    transform: translateY(-3px); 
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+    opacity: 1;
+}
+
+.swal2-backdrop-show {
+    backdrop-filter: blur(6px);
+    background: rgba(15, 20, 25, 0.75) !important;
 }
 
 

@@ -53,8 +53,7 @@ const redFlags = [
 		mensaje: "⚠️ Proceso de selección inusualmente rápido y sin entrevistas",
 		evaluar: (datos) => datos.procesoRapido === true,
 		gravedad: "alta",
-	}
-	
+	},
 ];
 
 const nivelesRiesgo = [
@@ -123,25 +122,37 @@ document.addEventListener("DOMContentLoaded", () => {
 function iniciarSesion() {
 	//busco el input
 	const inputNombre = document.getElementById("inputNombre");
-	const errorNombre = document.getElementById("errorNombre");
 	const nombre = inputNombre.value.trim(); // obtiene lo q el usuario escribio
 
 	if (nombre === "") {
 		// valido q no este vacio
-		errorNombre.style.display = "block"; // si no hay nombre mostar error
-		inputNombre.focus();
+		Swal.fire({
+			icon: "error",
+			title: "Nombre requerido",
+			text: "⚠️ Por favor ingresa tu nombre para continuar",
+			confirmButtonText: "OK",
+			confirmButtonColor: "#ef2133",
+		}).then(() => {
+			inputNombre.focus();
+		});
+
 		return;
 	}
 
-	errorNombre.style.display = "none"; // nombre valido oculta error
+	// Si el nombre es válido, guardar y continuar
+	localStorage.setItem("nombreUsuario", nombre);
 
-	localStorage.setItem("nombreUsuario", nombre); // guardo el nombre en el localStorage
-
-	document.getElementById("saludoUsuario").textContent =
-		`¡Hola ${nombre}! Responde las siguientes preguntas:`; // pongo el saludo al user en pantalla 2
-
-	// llamo a la func q cambia pantalla y paso el id de la pantalla q quiero mostrar
-	mostrarPantalla("pantallaFormulario"); 
+	Swal.fire({
+		icon: "success",
+		title: `¡Hola ${nombre}! 👋`,
+		text: "Responde las siguientes preguntas:",
+		confirmButtonText: "Empezar",
+		confirmButtonColor: "#00ba88",
+		timer: 2000,
+		timerProgressBar: true,
+		}).then(() => {
+		mostrarPantalla("pantallaFormulario");
+	});
 }
 
 //(pantalla 1) oculta todas las pantallas, muestra solo la activa
@@ -190,39 +201,46 @@ function actualizarProgreso() {
 
 //(pantalla 2)
 function siguientePregunta() {
-
 	// SECCIÓN 1: Validar Pregunta 1 (input de texto)
 
 	if (preguntaActualNum === 1) {
 		const empresa = document.getElementById("inputEmpresa").value.trim();
 
 		if (empresa === "") {
-			mostrarError("pregunta1", "⚠️ Por favor ingresa el nombre de la empresa");
+			Swal.fire({
+                icon: "warning",
+                title: "Campo vacío",
+                text: "⚠️ Por favor ingresa el nombre de la empresa",
+                confirmButtonText: "OK",
+                confirmButtonColor: "#ffc14d",
+            });
 			return;
 		}
 
 		datosOfertaActual.nombreEmpresa = empresa; //guarda el nombre de la empresa => lo guarda en datosOfertaActual.nombreEmpresa
 
 		// SECCIÓN 2: Validar Preguntas 2-10 (botones)
-
 	} else {
 		// js evalúa el template literal => `pregunta${preguntaActualNum}`/ `pregunta${5}`// Reemplaza la variable con su valor => El string "pregunta5"
 		const preguntaActual = document.getElementById(
 			`pregunta${preguntaActualNum}`,
 		);
-		 //Busca SOLO los botones DENTRO de esa pregunta, si preg 5 => busca solo en <div id="pregunta5">
+		//Busca SOLO los botones DENTRO de esa pregunta, si preg 5 => busca solo en <div id="pregunta5">
 		const botonesGrupo = preguntaActual.querySelectorAll(".btn-opcion");
 
 		// Array.from() lo convierte en un array real, some = algun btn cumple con la condicion T o F ?
-		const haySeleccion = Array.from(botonesGrupo).some( 
+		const haySeleccion = Array.from(botonesGrupo).some(
 			(btn) => btn.classList.contains("seleccionado"), // alguno de los 2 tiene la clase btn-opcion seleccionado?
 		);
 
 		if (!haySeleccion) {
-			mostrarError(
-				`pregunta${preguntaActualNum}`,
-				"⚠️ Por favor selecciona una opción",
-			);
+			Swal.fire({
+                icon: "info",
+                title: "Selección requerida",
+                text: "⚠️ Por favor selecciona una opción antes de continuar",
+                confirmButtonText: "OK",
+                confirmButtonColor: "#3085d6",
+            });
 			return;
 		}
 	}
@@ -234,7 +252,7 @@ function siguientePregunta() {
 
 	// SECCIÓN 4: Aavanza preguntaActualNum = 2, ++ => ahora es 3
 
-	preguntaActualNum++; 
+	preguntaActualNum++;
 
 	// SECCIÓN 5: Mostrar siguiente pregunta O procesar
 
@@ -262,11 +280,11 @@ function siguientePregunta() {
 
 //(pantalla 2) // lo opuesto a siguientePregunta()
 function anteriorPregunta() {
-	document.getElementById(`pregunta${preguntaActualNum}`).style.display = "none";
+	document.getElementById(`pregunta${preguntaActualNum}`).style.display ="none";
 
 	preguntaActualNum--; //retrocede Resta 1
 
-	document.getElementById(`pregunta${preguntaActualNum}`).style.display = "block"; // muestra la pre anterior
+	document.getElementById(`pregunta${preguntaActualNum}`).style.display ="block"; // muestra la pre anterior
 
 	document.getElementById("preguntaActual").textContent = preguntaActualNum;
 
@@ -282,30 +300,10 @@ function anteriorPregunta() {
 	document.getElementById("textoSiguiente").textContent = "Siguiente";
 }
 
-//(pantalla 2)
-function mostrarError(idPregunta, mensaje) {
-	const pregunta = document.getElementById(idPregunta);
-
-	let errorDiv = pregunta.querySelector(".error-message"); // busca si ya existe un div de error sino lo creo
-
-	if (!errorDiv) {
-		errorDiv = document.createElement("p");
-		errorDiv.className = "error-message";
-		pregunta.appendChild(errorDiv);
-	}
-
-	errorDiv.textContent = mensaje;
-	errorDiv.style.display = "block";
-
-	setTimeout(() => {
-		errorDiv.style.display = "none";
-	}, 3000);
-}
 
 // Toma todas las respuestas y calcula el nivel de riesgo
 //(pantalla 3)
 function procesarAnalisis() {
-
 	// PASO 1: Incremento el contador
 	contadorAnalisis++; //  Incrementa el n. de anlisis
 	datosOfertaActual.numeroAnalisis = contadorAnalisis; // guardo n de analisis en el {}
@@ -375,7 +373,7 @@ function mostrarResultados(resultado) {
     `;
 
 	document.getElementById("puntosFill").style.width = porcentajePuntos + "%";
-	
+
 	// mostrar alertas
 	const alertasDiv = document.getElementById("resultadoAlertas");
 
@@ -383,8 +381,8 @@ function mostrarResultados(resultado) {
 	// Recorre cada alerta y convierte c/u en 1 string y join une los strings
 	if (resultado.alertasDetectadas.length > 0) {
 		const alertasHTML = resultado.alertasDetectadas
-    .map(
-        (alerta, index) => `
+			.map(
+				(alerta, index) => `
         <div class="alerta-item alerta-${alerta.gravedad}">
             <div class="alerta-mensaje">
                 <strong>${index + 1}.</strong> ${alerta.mensaje}
@@ -392,8 +390,8 @@ function mostrarResultados(resultado) {
             <div class="alerta-puntos">${alerta.puntos} pts</div>
         </div>
     `,
-    )
-    .join("");
+			)
+			.join("");
 		alertasDiv.innerHTML = `
         <h3>🚨 Alertas detectadas (${resultado.alertasDetectadas.length}):</h3>
         ${alertasHTML}
@@ -425,7 +423,7 @@ function nuevoAnalisis() {
 	document.getElementById("inputEmpresa").value = ""; // 2.limpio input empresa
 
 	document.querySelectorAll(".btn-opcion").forEach((btn) => {
-		// 3.saco la clase "seleccionado" de todos los botones se ve sin marcar 
+		// 3.saco la clase "seleccionado" de todos los botones se ve sin marcar
 		btn.classList.remove("seleccionado");
 	});
 
@@ -451,50 +449,66 @@ function cerrarSesion() {
 	const nombreUsuario = localStorage.getItem("nombreUsuario");
 
 	if (!nombreUsuario) {
-		alert("⚠️ No hay ninguna sesión activa para cerrar.");
-		mostrarMenu();
+		Swal.fire({
+			icon: "info",
+			title: "No hay sesión activa",
+			text: "No hay ninguna sesión activa para cerrar.",
+			confirmButtonText: "OK",
+		}).then(() => mostrarMenu());
 		return;
 	}
 
-	const confirmar = confirm(
-		`🔒 ¿Deseas cerrar sesión?\n\nSe eliminará:\n• Tu nombre (${nombreUsuario})\n• Historial de ${historialAnalisis.length} análisis\n\n¿Continuar?`,
-	);
+	Swal.fire({
+		title: "🔒 ¿Deseas cerrar sesión?",
+		html: `
+			<div>
+				<p>Se eliminará:</p>
+				<ul style="list-style:none; padding:0; margin-top:15px;">
+					<li>👤 Tu nombre <b>${nombreUsuario}</b></li>
+      				<li>📊 Tus <b>${historialAnalisis.length}</b> análisis guardados</li>
+				</ul>
+				<p style="margin-top:15px; font-size:0.9rem; opacity:0.8;">
+      				Podrás volver a usar la app cuando quieras.
+    			</p>
+			</div>
+		`,
+		icon: "warning",
+		showCancelButton: true,
+		confirmButtonText: "Cerrar Sesión",
+		cancelButtonText: "Cancelar",
+		reverseButtons: true,
+	}).then((result) => {
+		if (result.isConfirmed) {
+			localStorage.clear();
 
-	// limpio localS
-	if (confirmar) {
-		localStorage.removeItem("nombreUsuario");
-		localStorage.removeItem("historialAnalisis");
+			historialAnalisis = [];
+			contadorAnalisis = 0;
+			datosOfertaActual = {};
+			preguntaActualNum = 1;
 
-		// reseteo las variables donde se acumulan los datos
-		historialAnalisis = [];
-		contadorAnalisis = 0;
-		datosOfertaActual = {};
-		preguntaActualNum = 1;
+			document.getElementById("inputNombre").value = "";
+			document.getElementById("inputEmpresa").value = "";
 
-		// limpio formularios
-		document.getElementById("inputNombre").value = "";
-		document.getElementById("inputEmpresa").value = "";
+			document
+				.querySelectorAll(".btn-opcion")
+				.forEach((btn) => btn.classList.remove("seleccionado"));
 
-		//Quitar selecciones de los btns
-		document.querySelectorAll(".btn-opcion").forEach((btn) => {
-			btn.classList.remove("seleccionado");
-		});
+			document.querySelectorAll(".pregunta").forEach((p, i) => {
+				p.style.display = i === 0 ? "block" : "none";
+			});
 
-		// reseteo preguntas
-		document.querySelectorAll(".pregunta").forEach((p, index) => {
-			p.style.display = index === 0 ? "block" : "none";
-		});
+			document.getElementById("btnAnterior").style.display = "none";
+			document.getElementById("preguntaActual").textContent = "1";
+			actualizarProgreso();
 
-		document.getElementById("btnAnterior").style.display = "none";
-		document.getElementById("preguntaActual").textContent = "1";
-		actualizarProgreso();
-
-		alert(`👋 Hasta luego, ${nombreUsuario}!\n\nTu información ha sido eliminada correctamente.`,);
-
-		mostrarPantalla("pantallaBienvenida");
-	} else {
-		// si el usuario cancela no hago nada
-	}
+			Swal.fire({
+				icon: "success",
+				title: `Hasta luego, ${nombreUsuario} 👋`,
+				text: "Tu información fue eliminada correctamente.",
+				confirmButtonText: "Aceptar",
+			}).then(() => mostrarPantalla("pantallaBienvenida"));
+		}
+	});
 }
 
 // (pantalla 5)
@@ -560,21 +574,21 @@ function mostrarHistorial() {
                     </div>
                 `;
 			})
-			.join('');
+			.join("");
 
-			historialContainer.innerHTML = analisisHTML;
+		historialContainer.innerHTML = analisisHTML;
 	}
-	
-	mostrarPantalla('pantallaHistorial');
+
+	mostrarPantalla("pantallaHistorial");
 }
 
 // (pantalla 6)
 function verDetalle(indice) {
 	analisisSeleccionado = historialAnalisis[indice];
 
-	const detalleContainer = document.getElementById('detalleContainer');
+	const detalleContainer = document.getElementById("detalleContainer");
 
-	detalleContainer.innerHTML =  `
+	detalleContainer.innerHTML = `
         <div class="detalle-card">
             <div class="empresa-header">
                 <span class="empresa-icono">🏢</span>
@@ -595,31 +609,38 @@ function verDetalle(indice) {
                 <p  class="analisis-f" style="color: #8899a6; margin: 8px 0; text-align: right;"> ${analisisSeleccionado.fecha}</p>
                 
             </div>
-            ${analisisSeleccionado.alertasDetectadas.length > 0 ? `
+            ${
+							analisisSeleccionado.alertasDetectadas.length > 0
+								? `
                 <div>
                     <h3 style="margin-bottom: 25px; color: #e1e8ed;text-align: center">
                         🚨 Alertas detectadas (${analisisSeleccionado.alertasDetectadas.length})
                     </h3>
-                    ${analisisSeleccionado.alertasDetectadas.map((alerta, i) => `
+                    ${analisisSeleccionado.alertasDetectadas
+											.map(
+												(alerta, i) => `
                         <div class="alerta-item alerta-${alerta.gravedad}">
                             <div class="alerta-mensaje">
             					<strong>${i + 1}.</strong> ${alerta.mensaje}
         					</div>
 							<div class="alerta-puntos">${alerta.puntos} pts</div>
                         </div>
-                    `).join('')}
+                    `,
+											)
+											.join("")}
                 </div>
-            ` : `
+            `
+								: `
                 <div style="text-align: center; padding: 30px; color: #00ba88; font-size: 1.2rem;">
                     ✅ No se detectaron señales de alerta
                 </div>
-            `}
+            `
+						}
         </div>
     `;
-	mostrarPantalla('pantallaDetalle');
+	mostrarPantalla("pantallaDetalle");
 }
- // (pantalla 6)
+// (pantalla 6)
 function volverHistorial() {
 	mostrarHistorial();
- }
-
+}
