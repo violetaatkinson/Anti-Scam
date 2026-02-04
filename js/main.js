@@ -56,49 +56,55 @@ const redFlags = [
 	},
 ];
 
-const nivelesRiesgo = [
-	{
-		min: 60,
-		conclusion: "🚨 ALERTA MÁXIMA - POSIBLE ESTAFA",
-		nivel: "MUY ALTO",
-		clase: "nivel-muy-alto",
-		badge: "badge-muy-alto",
-	},
-	{
-		min: 40,
-		conclusion: "⚠️ SOSPECHOSO - Procede con cautela",
-		nivel: "ALTO",
-		clase: "nivel-alto",
-		badge: "badge-alto",
-	},
-	{
-		min: 20,
-		conclusion: "⚡ ADVERTENCIA - Verifica más información",
-		nivel: "MEDIO",
-		clase: "nivel-medio",
-		badge: "badge-medio",
-	},
-	{
-		min: 0,
-		conclusion: "✅ APARENTEMENTE SEGURO - Aún así, investiga",
-		nivel: "BAJO",
-		clase: "nivel-bajo",
-		badge: "badge-bajo",
-	},
-];
-
-// MENSAJE DE INICIO
-console.log(
-	"%c🔍 ANTI SCAM",
-	"font-size: 24px; font-weight: bold; color: #e74c3c;",
-);
-console.log("Pulsa 'Comenzar Análisis' para empezar.\n");
+/* CARGO NIVELES DE RIESGO DESDE LA API */
+fetch("https://api.npoint.io/32ebe2a9eba032ef389c")
+    .then((response) => response.json()) 
+    .then((dataRiesgos) => { // contiene array con los niveles
+        nivelesRiesgo = dataRiesgos; // guardo los datos en la variable global
+        console.log("✅ Niveles de riesgo cargados:", nivelesRiesgo);
+    })
+    .catch((error) => {
+        console.error("❌ Error al cargar niveles de riesgo:", error);
+        
+        // PLAN B: Si falla la API, usao datos por defecto
+        nivelesRiesgo = [
+            {
+                min: 60,
+                conclusion: "🚨 ALERTA MÁXIMA - POSIBLE ESTAFA",
+                nivel: "MUY ALTO",
+                clase: "nivel-muy-alto",
+                badge: "badge-muy-alto",
+            },
+            {
+                min: 40,
+                conclusion: "⚠️ SOSPECHOSO - Procede con cautela",
+                nivel: "ALTO",
+                clase: "nivel-alto",
+                badge: "badge-alto",
+            },
+            {
+                min: 20,
+                conclusion: "⚡ ADVERTENCIA - Verifica más información",
+                nivel: "MEDIO",
+                clase: "nivel-medio",
+                badge: "badge-medio",
+            },
+            {
+                min: 0,
+                conclusion: "✅ APARENTEMENTE SEGURO - Aún así, investiga",
+                nivel: "BAJO",
+                clase: "nivel-bajo",
+                badge: "badge-bajo",
+            },
+        ];
+    });
 
 let datosOfertaActual = {}; // Guarda las respuestas del usuario del form
 let preguntaActualNum = 1; // N. de pregunta actual,siguiente preguntaActualNum++ = 2 y asi , muestra y oculta la preg
 let contadorAnalisis = 0; // Cuenta cuántos análisis se hicieron en total en la sesion, se incrementa cada vez q completas un analisis
 let historialAnalisis = []; // guarda todos los analisis de la sesion
 let analisisSeleccionado = null; // Guarda temporalmente el análisis que estás viendo en detalle
+let nivelesRiesgo = []; // los datos se guardan con el fetch
 
 // inicio de la app
 document.addEventListener("DOMContentLoaded", () => {
@@ -150,7 +156,7 @@ function iniciarSesion() {
 		confirmButtonColor: "#00ba88",
 		timer: 2000,
 		timerProgressBar: true,
-		}).then(() => {
+	}).then(() => {
 		mostrarPantalla("pantallaFormulario");
 	});
 }
@@ -208,12 +214,12 @@ function siguientePregunta() {
 
 		if (empresa === "") {
 			Swal.fire({
-                icon: "warning",
-                title: "Campo vacío",
-                text: "⚠️ Por favor ingresa el nombre de la empresa",
-                confirmButtonText: "OK",
-                confirmButtonColor: "#ffc14d",
-            });
+				icon: "warning",
+				title: "Campo vacío",
+				text: "⚠️ Por favor ingresa el nombre de la empresa",
+				confirmButtonText: "OK",
+				confirmButtonColor: "#ffc14d",
+			});
 			return;
 		}
 
@@ -235,12 +241,12 @@ function siguientePregunta() {
 
 		if (!haySeleccion) {
 			Swal.fire({
-                icon: "info",
-                title: "Selección requerida",
-                text: "⚠️ Por favor selecciona una opción antes de continuar",
-                confirmButtonText: "OK",
-                confirmButtonColor: "#3085d6",
-            });
+				icon: "info",
+				title: "Selección requerida",
+				text: "⚠️ Por favor selecciona una opción antes de continuar",
+				confirmButtonText: "OK",
+				confirmButtonColor: "#3085d6",
+			});
 			return;
 		}
 	}
@@ -257,7 +263,8 @@ function siguientePregunta() {
 	// SECCIÓN 5: Mostrar siguiente pregunta O procesar
 
 	if (preguntaActualNum <= 10) {
-		document.getElementById(`pregunta${preguntaActualNum}`).style.display = "block";
+		document.getElementById(`pregunta${preguntaActualNum}`).style.display =
+			"block";
 
 		// Actualizar texto "Pregunta X de 10"
 		document.getElementById("preguntaActual").textContent = preguntaActualNum;
@@ -280,11 +287,13 @@ function siguientePregunta() {
 
 //(pantalla 2) // lo opuesto a siguientePregunta()
 function anteriorPregunta() {
-	document.getElementById(`pregunta${preguntaActualNum}`).style.display ="none";
+	document.getElementById(`pregunta${preguntaActualNum}`).style.display =
+		"none";
 
 	preguntaActualNum--; //retrocede Resta 1
 
-	document.getElementById(`pregunta${preguntaActualNum}`).style.display ="block"; // muestra la pre anterior
+	document.getElementById(`pregunta${preguntaActualNum}`).style.display =
+		"block"; // muestra la pre anterior
 
 	document.getElementById("preguntaActual").textContent = preguntaActualNum;
 
@@ -300,10 +309,19 @@ function anteriorPregunta() {
 	document.getElementById("textoSiguiente").textContent = "Siguiente";
 }
 
-
 // Toma todas las respuestas y calcula el nivel de riesgo
 //(pantalla 3)
 function procesarAnalisis() {
+	 // VALIDACIÓN: Asegurar que los niveles están cargados
+	if (nivelesRiesgo.length === 0) {
+        Swal.fire({
+            icon: "error",
+            title: "Error de carga",
+            text: "Los niveles de riesgo aún no se han cargado. Intenta de nuevo en unos segundos.",
+            confirmButtonText: "OK"
+        });
+        return; // Detener el análisis
+    }
 	// PASO 1: Incremento el contador
 	contadorAnalisis++; //  Incrementa el n. de anlisis
 	datosOfertaActual.numeroAnalisis = contadorAnalisis; // guardo n de analisis en el {}
@@ -327,7 +345,7 @@ function procesarAnalisis() {
 	);
 
 	//paso 5 FIND: obtener nivel de riesgo, busca el 1er nivel q cumpla la condicion => (60, 40, 20, 0), para cuando entra en el primero q cumple
-	const nivelInfo = nivelesRiesgo.find((nivel) => puntosRiesgo >= nivel.min);
+	const nivelInfo = nivelesRiesgo.find((nivel) => puntosRiesgo >= nivel.min); //FUNCIONA CON LOS DATOS DE LA API DEL FETCH
 
 	// paso 6: creo un objeto con todos los datos para mostrar en pantalla y en detalle y lo guardo en el historial
 	const resultadoAnalisis = {
