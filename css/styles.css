@@ -27,53 +27,62 @@ body {
 
 .title {
     font-family: "Anton SC", sans-serif;
-    font-weight: 400;
+    font-weight: 800;
     font-style: normal;
     font-size: 50px;
     margin: 0px;
+    letter-spacing: 2px;
+    color: #6FC3FF;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    
 }
 
 .title-red {
-    color: #FF3B3B;
-    animation: pulse 2s ease-in-out infinite;
+     color: #2B74D9;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    animation: fadeUp 0.8s ease-out;
 }
 
 .pulse {
-    animation: pulse 2s ease-in-out infinite;
+    animation: fadeUp 0.8s ease-out;
 }
 
 
 .title-paragraph {
-    font-family: "Raleway", sans-serif;
+     font-family: "Raleway", sans-serif;
     font-weight: 500;
-    line-height: 1.7;
-    font-style: normal;
-    color: rgba(255, 255, 255, 0.85);
-    padding-bottom: 10px;
-    padding: 10px 0;
-    max-width: 600px;
-    font-size: 17px;
-    letter-spacing: 1px;
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.9);
+    max-width: 620px;
+    font-size: 16.5px;
+    letter-spacing: 0.6px;
+    margin-top: 12px;
 }
 
 .title-cta {
-    color: rgba(255, 255, 255, 0.85);
-    background: #ef2133;
+    color: #FFFFFF; 
+    background: linear-gradient(
+      135deg,
+      #2f6bff, 
+      #7dd0ff  
+    );
     text-transform: uppercase;
     border: none;
     border-radius: 50px;
     width: 90%;
-    padding: 15px 35px;
+    padding: 16px 36px;
     font-size: 1rem;
-    letter-spacing: 1px;
-    font-weight: 600;
+    letter-spacing: 1.2px;
+    font-weight: 700;
     cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
+    margin-top: 22px;
+    box-shadow: 0 10px 24px rgba(47, 107, 255, 0.35);
 }
 
 .title-cta:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(239, 33, 51, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 14px 32px rgba(47, 107, 255, 0.5)
 }
 
 .pantalla {
@@ -101,7 +110,8 @@ body {
 
 .input-container input:focus {
     outline: none;
-    border-color: #FF3B3B;
+    border-color: rgba(47, 107, 255, 0.5);
+    
 }
 
 
@@ -208,8 +218,7 @@ body {
 
 .input-dark:focus {
     outline: none;
-    border-color: rgba(239, 33, 51, 0.3);
-    ;
+    border-color:  rgba(47, 107, 255, 0.35);
     background: #1f2430;
 }
 
@@ -688,21 +697,15 @@ body {
     }
 }
 
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-
-    50% {
-        transform: scale(1.1);
-        opacity: 0.7;
-    }
-
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes float {
@@ -747,7 +750,12 @@ body {
 
 .swal2-confirm {
     color: rgba(255, 255, 255, 0.85);
-    background: #ef2133;
+    background: linear-gradient(
+      135deg,
+      #2f6bff, 
+      #7dd0ff  
+    );
+     box-shadow: 0 10px 24px rgba(47, 107, 255, 0.35);
     text-transform: uppercase;
     border: none;
     border-radius: 50px;
@@ -762,15 +770,14 @@ body {
         transform 0.25s ease,
         box-shadow 0.25s ease,
         background 0.25s ease;
-    animation: pulse-danger 2s infinite;
+   
 }
 
 .swal2-confirm:hover {
-    background: #ff2e3f;
-    transform: translateY(-3px);
+     transform: translateY(-3px);
     box-shadow:
-        0 10px 25px rgba(239, 33, 51, 0.55),
-        0 0 18px rgba(239, 33, 51, 0.35);
+        0 14px 32px rgba(47, 107, 255, 0.5),
+        0 0 18px rgba(125, 208, 255, 0.35);
 }
 
 .swal2-cancel {
