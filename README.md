@@ -1,6 +1,10 @@
 <section>
   <h2>🛡️ ANTI SCAM – Detector de Fraudes Laborales</h2>
-  <img src="images/image.png" width="600">
+  <img 
+    src="images/image.png" 
+    style="max-width: 580px; width: 100%; height: auto; margin: 20px 0;"
+  />
+
 
   <p>
     <strong>ANTI SCAM</strong> es una aplicación web que ayuda a identificar
