@@ -28,6 +28,7 @@
     <li>🚨 Detección de señales de alerta en ofertas laborales</li>
     <li>📊 Sistema de puntuación con niveles de riesgo</li>
     <li>🕒 Historial de análisis guardado localmente</li>
+    <li>💬 Compartí los resultados o alertas por WhatsApp 🟢</li>
     <li>🎨 Interfaz moderna y responsive</li>
     <li>🔒 Privacidad garantizada (datos locales)</li>
   </ul>
