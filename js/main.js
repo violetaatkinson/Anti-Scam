@@ -313,14 +313,29 @@ function anteriorPregunta() {
 //(pantalla 3)
 function procesarAnalisis() {
 	 // VALIDACIÓN: Asegurar que los niveles están cargados
-	if (nivelesRiesgo.length === 0) {
+	if (!nivelesRiesgo || nivelesRiesgo.length === 0) {
         Swal.fire({
-            icon: "error",
-            title: "Error de carga",
-            text: "Los niveles de riesgo aún no se han cargado. Intenta de nuevo en unos segundos.",
-            confirmButtonText: "OK"
+            icon: "warning",
+            title: "Datos cargando...",
+            text: "Por favor espera un momento mientras se cargan los datos necesarios.",
+            confirmButtonText: "Entendido",
+            confirmButtonColor: "#ffc14d"
+        }).then(() => {
+            // Reintentar después de 2 segundos
+            setTimeout(() => {
+                if (nivelesRiesgo.length > 0) {
+                    procesarAnalisis();
+                } else {
+                    Swal.fire({
+                        icon: "error",
+                        title: "Error de conexión",
+                        text: "No se pudieron cargar los datos. Por favor recarga la página.",
+                        confirmButtonText: "OK"
+                    });
+                }
+            }, 2000);
         });
-        return; // Detener el análisis
+        return;
     }
 	// PASO 1: Incremento el contador
 	contadorAnalisis++; //  Incrementa el n. de anlisis
