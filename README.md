@@ -13,6 +13,8 @@
     para tomar decisiones más seguras al buscar empleo.
   </p>
 
+    <hr>
+
   <p>
     🌐 <strong>Visita el sitio:</strong><br>
     [https://anti-scam-six.vercel.app/](https://anti-scam-six.vercel.app/)
