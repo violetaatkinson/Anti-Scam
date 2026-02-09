@@ -13,7 +13,7 @@
     para tomar decisiones más seguras al buscar empleo.
   </p>
 
-    <hr>
+  <hr>
 
   <p>
     🌐 <strong>Visita el sitio:</strong><br>
