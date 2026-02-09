@@ -19,11 +19,12 @@
      
   <h3>🌐 Visita el sitio:</h3><br>
 
-    [https://anti-scam-six.vercel.app/](https://anti-scam-six.vercel.app/)
- 
-
   <p>
-    📂 <strong>Código fuente</strong><br>
+    [https://anti-scam-six.vercel.app/](https://anti-scam-six.vercel.app/)
+  </p>
+ 
+<h3>📂 Código fuente</h3><br>
+  <p>
     [https://github.com/violetaatkinson/Anti-Scam](https://github.com/violetaatkinson/Anti-Scam)
   </p>
 
