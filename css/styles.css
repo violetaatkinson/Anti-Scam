@@ -812,6 +812,31 @@ body {
     background: rgba(15, 20, 25, 0.75) !important;
 }
 
+.btn-compartir {
+	background: linear-gradient(135deg, #25d366, #1ebe5d);
+	color: #fff;
+	border: none;
+	border-radius: 50px;
+	padding: 14px 28px;
+	font-size: 1rem;
+	font-weight: 500;
+	cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	box-shadow: 0 10px 25px rgba(37, 211, 102, 0.35);
+	transition: all 0.25s ease;
+    font-family: "Raleway", sans-serif;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-compartir:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 14px 30px rgba(37, 211, 102, 0.5);
+}
+
 
 /*----- Responsive Moviles ------*/
 @media (max-width: 571px) {
@@ -1054,6 +1079,13 @@ body {
 
     .analisis-f {
         text-align: center !important;
+    }
+
+    .btn-compartir {
+        padding: 10px 20px;        
+        font-size: 0.8rem;        
+        gap: 6px;                 
+        border-radius: 40px;      
     }
 
 }

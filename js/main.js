@@ -58,46 +58,47 @@ const redFlags = [
 
 /* CARGO NIVELES DE RIESGO DESDE LA API */
 fetch("https://api.npoint.io/32ebe2a9eba032ef389c")
-    .then((response) => response.json()) 
-    .then((dataRiesgos) => { // contiene array con los niveles
-        nivelesRiesgo = dataRiesgos; // guardo los datos en la variable global
-        console.log("✅ Niveles de riesgo cargados:", nivelesRiesgo);
-    })
-    .catch((error) => {
-        console.error("❌ Error al cargar niveles de riesgo:", error);
-        
-        // PLAN B: Si falla la API, usao datos por defecto
-        nivelesRiesgo = [
-            {
-                min: 60,
-                conclusion: "🚨 ALERTA MÁXIMA - POSIBLE ESTAFA",
-                nivel: "MUY ALTO",
-                clase: "nivel-muy-alto",
-                badge: "badge-muy-alto",
-            },
-            {
-                min: 40,
-                conclusion: "⚠️ SOSPECHOSO - Procede con cautela",
-                nivel: "ALTO",
-                clase: "nivel-alto",
-                badge: "badge-alto",
-            },
-            {
-                min: 20,
-                conclusion: "⚡ ADVERTENCIA - Verifica más información",
-                nivel: "MEDIO",
-                clase: "nivel-medio",
-                badge: "badge-medio",
-            },
-            {
-                min: 0,
-                conclusion: "✅ APARENTEMENTE SEGURO - Aún así, investiga",
-                nivel: "BAJO",
-                clase: "nivel-bajo",
-                badge: "badge-bajo",
-            },
-        ];
-    });
+	.then((response) => response.json())
+	.then((dataRiesgos) => {
+		// contiene array con los niveles
+		nivelesRiesgo = dataRiesgos; // guardo los datos en la variable global
+		console.log("✅ Niveles de riesgo cargados:", nivelesRiesgo);
+	})
+	.catch((error) => {
+		console.error("❌ Error al cargar niveles de riesgo:", error);
+
+		// PLAN B: Si falla la API, usao datos por defecto
+		nivelesRiesgo = [
+			{
+				min: 60,
+				conclusion: "🚨 ALERTA MÁXIMA - POSIBLE ESTAFA",
+				nivel: "MUY ALTO",
+				clase: "nivel-muy-alto",
+				badge: "badge-muy-alto",
+			},
+			{
+				min: 40,
+				conclusion: "⚠️ SOSPECHOSO - Procede con cautela",
+				nivel: "ALTO",
+				clase: "nivel-alto",
+				badge: "badge-alto",
+			},
+			{
+				min: 20,
+				conclusion: "⚡ ADVERTENCIA - Verifica más información",
+				nivel: "MEDIO",
+				clase: "nivel-medio",
+				badge: "badge-medio",
+			},
+			{
+				min: 0,
+				conclusion: "✅ APARENTEMENTE SEGURO - Aún así, investiga",
+				nivel: "BAJO",
+				clase: "nivel-bajo",
+				badge: "badge-bajo",
+			},
+		];
+	});
 
 let datosOfertaActual = {}; // Guarda las respuestas del usuario del form
 let preguntaActualNum = 1; // N. de pregunta actual,siguiente preguntaActualNum++ = 2 y asi , muestra y oculta la preg
@@ -312,31 +313,31 @@ function anteriorPregunta() {
 // Toma todas las respuestas y calcula el nivel de riesgo
 //(pantalla 3)
 function procesarAnalisis() {
-	 // VALIDACIÓN: Asegurar que los niveles están cargados
+	// VALIDACIÓN: Asegurar que los niveles están cargados
 	if (!nivelesRiesgo || nivelesRiesgo.length === 0) {
-        Swal.fire({
-            icon: "warning",
-            title: "Datos cargando...",
-            text: "Por favor espera un momento mientras se cargan los datos necesarios.",
-            confirmButtonText: "Entendido",
-            confirmButtonColor: "#ffc14d"
-        }).then(() => {
-            // Reintentar después de 2 segundos
-            setTimeout(() => {
-                if (nivelesRiesgo.length > 0) {
-                    procesarAnalisis();
-                } else {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Error de conexión",
-                        text: "No se pudieron cargar los datos. Por favor recarga la página.",
-                        confirmButtonText: "OK"
-                    });
-                }
-            }, 2000);
-        });
-        return;
-    }
+		Swal.fire({
+			icon: "warning",
+			title: "Datos cargando...",
+			text: "Por favor espera un momento mientras se cargan los datos necesarios.",
+			confirmButtonText: "Entendido",
+			confirmButtonColor: "#ffc14d",
+		}).then(() => {
+			// Reintentar después de 2 segundos
+			setTimeout(() => {
+				if (nivelesRiesgo.length > 0) {
+					procesarAnalisis();
+				} else {
+					Swal.fire({
+						icon: "error",
+						title: "Error de conexión",
+						text: "No se pudieron cargar los datos. Por favor recarga la página.",
+						confirmButtonText: "OK",
+					});
+				}
+			}, 2000);
+		});
+		return;
+	}
 	// PASO 1: Incremento el contador
 	contadorAnalisis++; //  Incrementa el n. de anlisis
 	datosOfertaActual.numeroAnalisis = contadorAnalisis; // guardo n de analisis en el {}
@@ -627,26 +628,35 @@ function verDetalle(indice) {
                 <span class="empresa-icono">🏢</span>
                 <h2>${analisisSeleccionado.nombreEmpresa}</h2>
             </div>
+
             <div class="nivel-badge ${analisisSeleccionado.nivelClase}">
                 ${analisisSeleccionado.conclusion}
             </div>
+
             <div class="puntos-container">
                 <div class="puntos-numero">
                     ${analisisSeleccionado.puntosRiesgo} 
-                    <span style="font-size: 1.5rem;">/ 185</span>
+                    <span style="font-size: 1.5rem;">/ 215</span>
                 </div>
             </div>
+
             <div style="margin: 30px 0;">
-                <h3 class="resultado text-center" style="margin-bottom: 15px; color: #e1e8ed;">📊 Información</h3>
-				<p  class="analisis-n" style="color: #8899a6; margin: 8px 0; text-align: right;font-size:20px">Análisis #${analisisSeleccionado.numeroAnalisis}</p>
-                <p  class="analisis-f" style="color: #8899a6; margin: 8px 0; text-align: right;"> ${analisisSeleccionado.fecha}</p>
-                
+                <h3 class="resultado text-center" style="margin-bottom: 15px; color: #e1e8ed;">
+                    📊 Información
+                </h3>
+				<p class="analisis-n" style="color: #8899a6; margin: 8px 0; text-align: right; font-size:20px">
+                    Análisis #${analisisSeleccionado.numeroAnalisis}
+                </p>
+                <p class="analisis-f" style="color: #8899a6; margin: 8px 0; text-align: right;">
+                    ${analisisSeleccionado.fecha}
+                </p>
             </div>
+
             ${
 							analisisSeleccionado.alertasDetectadas.length > 0
 								? `
                 <div>
-                    <h3 style="margin-bottom: 25px; color: #e1e8ed;text-align: center">
+                    <h3 style="margin-bottom: 25px; color: #e1e8ed; text-align: center">
                         🚨 Alertas detectadas (${analisisSeleccionado.alertasDetectadas.length})
                     </h3>
                     ${analisisSeleccionado.alertasDetectadas
@@ -654,9 +664,9 @@ function verDetalle(indice) {
 												(alerta, i) => `
                         <div class="alerta-item alerta-${alerta.gravedad}">
                             <div class="alerta-mensaje">
-            					<strong>${i + 1}.</strong> ${alerta.mensaje}
-        					</div>
-							<div class="alerta-puntos">${alerta.puntos} pts</div>
+                                <strong>${i + 1}.</strong> ${alerta.mensaje}
+                            </div>
+                            <div class="alerta-puntos">${alerta.puntos} pts</div>
                         </div>
                     `,
 											)
@@ -669,11 +679,66 @@ function verDetalle(indice) {
                 </div>
             `
 						}
+
+          
+            <div style="margin-top: 35px; text-align: center;">
+                <button 
+                    class="btn-compartir"
+                    onclick="event.stopPropagation(); compartirAnalisis(${indice})">
+                    <i class="bi bi-whatsapp"></i>
+					Compartir X WhatsApp
+                </button>
+            </div>
         </div>
     `;
+
 	mostrarPantalla("pantallaDetalle");
 }
+
 // (pantalla 6)
 function volverHistorial() {
 	mostrarHistorial();
 }
+
+function compartirAnalisis(indice) {
+	const analisis = historialAnalisis[indice];
+
+	// creo el mensaje
+	let mensaje = `🛡️ *ANTI SCAM – Análisis #${analisis.numeroAnalisis}*\n\n`;
+	mensaje += `🏢 *Empresa:* ${analisis.nombreEmpresa.toUpperCase()}\n`;
+	mensaje += `📊 *Nivel de riesgo:* ${analisis.nivelRiesgo}\n`;
+	mensaje += `🎯 *Puntuación:* ${analisis.puntosRiesgo}/215\n`;
+	mensaje += `📅 *Fecha:* ${analisis.fecha}\n\n`;
+
+	if (analisis.alertasDetectadas.length > 0) {
+		mensaje += `🚨 *Alertas detectadas:*\n`;
+		analisis.alertasDetectadas.forEach((alerta, i) => {
+			mensaje += `${i + 1}. ${alerta.mensaje} (${alerta.puntos} pts)\n`;
+		});
+	} else {
+		mensaje += `✅ No se detectaron señales de alerta\n`;
+	}
+
+	mensaje += `\n🔗 Analizá ofertas en:\nhttps://violetaatkinson.github.io/Anti-Scam/`;
+
+	//encodeURIComponent convierte el mensaje en un formato seguro para URLs.
+	const mensajeEncoded = encodeURIComponent(mensaje);
+
+	const whatsappURL = `https://wa.me/?text=${mensajeEncoded}`;
+
+	// Intentar abrir WhatsApp
+	const ventana = window.open(whatsappURL, "_blank");
+
+	// Fallback si el navegador lo bloquea
+	if (!ventana) {
+		navigator.clipboard.writeText(mensaje).then(() => {
+			Swal.fire({
+				icon: "success",
+				title: "📋 Copiado al portapapeles",
+				text: "Pegalo en WhatsApp o donde quieras",
+				confirmButtonColor: "#00ba88",
+			});
+		});
+	}
+}
+
