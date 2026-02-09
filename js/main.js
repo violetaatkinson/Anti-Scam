@@ -56,49 +56,29 @@ const redFlags = [
 	},
 ];
 
-/* CARGO NIVELES DE RIESGO DESDE LA API */
-fetch("https://api.npoint.io/32ebe2a9eba032ef389c")
-	.then((response) => response.json())
-	.then((dataRiesgos) => {
+
+async function cargarNivelesRiesgo() {
+	/* CARGO NIVELES DE RIESGO DESDE LA API */
+	try {
+		const response = await fetch("https://api.npoint.io/32ebe2a9eba032ef389c");
+		const dataRiesgos = await response.json();
 		// contiene array con los niveles
 		nivelesRiesgo = dataRiesgos; // guardo los datos en la variable global
 		console.log("✅ Niveles de riesgo cargados:", nivelesRiesgo);
-	})
-	.catch((error) => {
+	} catch (error) {
 		console.error("❌ Error al cargar niveles de riesgo:", error);
 
 		// PLAN B: Si falla la API, usao datos por defecto
 		nivelesRiesgo = [
-			{
-				min: 60,
-				conclusion: "🚨 ALERTA MÁXIMA - POSIBLE ESTAFA",
-				nivel: "MUY ALTO",
-				clase: "nivel-muy-alto",
-				badge: "badge-muy-alto",
-			},
-			{
-				min: 40,
-				conclusion: "⚠️ SOSPECHOSO - Procede con cautela",
-				nivel: "ALTO",
-				clase: "nivel-alto",
-				badge: "badge-alto",
-			},
-			{
-				min: 20,
-				conclusion: "⚡ ADVERTENCIA - Verifica más información",
-				nivel: "MEDIO",
-				clase: "nivel-medio",
-				badge: "badge-medio",
-			},
-			{
-				min: 0,
-				conclusion: "✅ APARENTEMENTE SEGURO - Aún así, investiga",
-				nivel: "BAJO",
-				clase: "nivel-bajo",
-				badge: "badge-bajo",
-			},
+			{ min: 60, conclusion: "🚨 ALERTA MÁXIMA - POSIBLE ESTAFA", nivel: "MUY ALTO", clase: "nivel-muy-alto", badge: "badge-muy-alto" },
+			{ min: 40, conclusion: "⚠️ SOSPECHOSO - Procede con cautela", nivel: "ALTO", clase: "nivel-alto", badge: "badge-alto" },
+			{ min: 20, conclusion: "⚡ ADVERTENCIA - Verifica más información", nivel: "MEDIO", clase: "nivel-medio", badge: "badge-medio" },
+			{ min: 0, conclusion: "✅ APARENTEMENTE SEGURO - Aún así, investiga", nivel: "BAJO", clase: "nivel-bajo", badge: "badge-bajo" }
 		];
-	});
+	}
+
+}
+	
 
 let datosOfertaActual = {}; // Guarda las respuestas del usuario del form
 let preguntaActualNum = 1; // N. de pregunta actual,siguiente preguntaActualNum++ = 2 y asi , muestra y oculta la preg
@@ -109,57 +89,57 @@ let nivelesRiesgo = []; // los datos se guardan con el fetch
 
 // inicio de la app
 document.addEventListener("DOMContentLoaded", () => {
-	const nombreGuardado = localStorage.getItem("nombreUsuario"); // carga el nombre si exite si no devuelve null
+	cargarNombreUsuario() 
+	cargarHistorial()
+	configurarBotonesOpcion(); 
+	cargarNivelesRiesgo()
+});
 
-	if (nombreGuardado) {
-		document.getElementById("inputNombre").value = nombreGuardado; // si encontro un nombre lo pone en el input
-	}
+function cargarNombreUsuario() {
+  const nombreGuardado = localStorage.getItem("nombreUsuario");// carga el nombre si exite si no devuelve null
+  if (nombreGuardado) document.getElementById("inputNombre").value = nombreGuardado;  // si encontro un nombre lo pone en el input
+}
 
+function cargarHistorial() {
 	const historialGuardado = localStorage.getItem("historialAnalisis"); //busca el historial guardado
 	if (historialGuardado) {
-		// si no hay nada guardado salta este bloque
 		historialAnalisis = JSON.parse(historialGuardado); //Convierte un string a objeto/array
 		contadorAnalisis = historialAnalisis.length; // cuenta cuantos analisis hay
 	}
-
-	configurarBotonesOpcion(); // quiero q los btn funcionen desde el inicio
-});
+}
 
 //(pantalla 1)
-function iniciarSesion() {
-	//busco el input
-	const inputNombre = document.getElementById("inputNombre");
-	const nombre = inputNombre.value.trim(); // obtiene lo q el usuario escribio
+function iniciarSesion() { 
+	 const nombre = document.getElementById("inputNombre").value.trim();
 
-	if (nombre === "") {
-		// valido q no este vacio
-		Swal.fire({
-			icon: "error",
-			title: "Nombre requerido",
-			text: "⚠️ Por favor ingresa tu nombre para continuar",
-			confirmButtonText: "OK",
-			confirmButtonColor: "#ef2133",
-		}).then(() => {
-			inputNombre.focus();
-		});
+	 if(!nombre) {
+		return Swal.fire({
+			 icon:"error",
+			 title:"Nombre requerido",
+			 text:"⚠️ Por favor ingresa tu nombre",
+			 confirmButtonText: "OK",
+			 confirmButtonColor:"#ef2133" 
+		})
+		.then(() => {
+			 document.getElementById("inputNombre").focus()
+		})
 
-		return;
-	}
+	 }
 
-	// Si el nombre es válido, guardar y continuar
-	localStorage.setItem("nombreUsuario", nombre);
-
-	Swal.fire({
-		icon: "success",
-		title: `¡Hola ${nombre}! 👋`,
-		text: "Responde las siguientes preguntas:",
+	 localStorage.setItem("nombreUsuario", nombre);
+	  Swal.fire({ 
+		icon:"success", 
+		title:`¡Hola ${nombre} ! 👋`,
+		text:"Responde las siguientes preguntas:",
 		confirmButtonText: "Empezar",
-		confirmButtonColor: "#00ba88",
-		timer: 2000,
-		timerProgressBar: true,
-	}).then(() => {
+		confirmButtonColor:"#00ba88",
+		timer:2000,
+		timerProgressBar:true
+	 })
+	 .then(() => {
 		mostrarPantalla("pantallaFormulario");
 	});
+
 }
 
 //(pantalla 1) oculta todas las pantallas, muestra solo la activa
@@ -179,9 +159,7 @@ function configurarBotonesOpcion() {
 			const pregunta = this.dataset.pregunta; // lee el atributo cuando hago click pregunta = "solicitanDinero"
 			const valor = this.dataset.valor; // si / no valor = "true"
 
-			document
-				.querySelectorAll(`[data-pregunta="${pregunta}"]`)
-				.forEach((b) => {
+			document.querySelectorAll(`[data-pregunta="${pregunta}"]`).forEach((b) => {
 					// Busca elementos que tengan exactamente ese atributo: [data-pregunta="solicitanDinero"]
 					b.classList.remove("seleccionado"); // Quitar la clase "seleccionado" de TODOS los botones del mismo grupo.
 				});
