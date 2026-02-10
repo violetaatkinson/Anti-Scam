@@ -142,13 +142,15 @@ function iniciarSesion() {
 
 }
 
-//(pantalla 1) oculta todas las pantallas, muestra solo la activa
+//(pantalla 1) 
 function mostrarPantalla(idPantalla) {
-	document.querySelectorAll(".pantalla").forEach((p) => {
+	
+	// PASO 1: Ocultar TODAS las pantallas
+	document.querySelectorAll(".pantalla").forEach((p) => { //"p" es cada pantalla
 		p.classList.remove("activa");
 	});
 
-	// busca la pantalla especifica q le pase y le agrego la clase solo para q esa pantalla sea visible
+	// PASO 2: Mostrar SOLO la pantalla que me pidas con el id
 	document.getElementById(idPantalla).classList.add("activa");
 }
 
@@ -202,15 +204,13 @@ function siguientePregunta() {
 			return;
 		}
 
-		datosOfertaActual.nombreEmpresa = empresa; //guarda el nombre de la empresa => lo guarda en datosOfertaActual.nombreEmpresa
+		datosOfertaActual.nombreEmpresa = empresa; //guarda el nombre de la empresa =>datosOfertaActual = { nombreEmpresa: "Google" }
 
 		// SECCIÓN 2: Validar Preguntas 2-10 (botones)
 	} else {
-		// js evalúa el template literal => `pregunta${preguntaActualNum}`/ `pregunta${5}`// Reemplaza la variable con su valor => El string "pregunta5"
-		const preguntaActual = document.getElementById(
-			`pregunta${preguntaActualNum}`,
-		);
-		//Busca SOLO los botones DENTRO de esa pregunta, si preg 5 => busca solo en <div id="pregunta5">
+		// Si preguntaActualNum = 5 → `pregunta${5}` → "pregunta5 => <div id="pregunta5">
+		const preguntaActual = document.getElementById(`pregunta${preguntaActualNum}`,);
+		//Busca SOLO los botones DENTRO de esa pregunta
 		const botonesGrupo = preguntaActual.querySelectorAll(".btn-opcion");
 
 		// Array.from() lo convierte en un array real, some = algun btn cumple con la condicion T o F ?
@@ -218,7 +218,7 @@ function siguientePregunta() {
 			(btn) => btn.classList.contains("seleccionado"), // alguno de los 2 tiene la clase btn-opcion seleccionado?
 		);
 
-		if (!haySeleccion) {
+		if (!haySeleccion) { // Si NINGUNO está seleccionado, muestra error
 			Swal.fire({
 				icon: "info",
 				title: "Selección requerida",
@@ -232,8 +232,7 @@ function siguientePregunta() {
 
 	// SECCIÓN 3: Oculta la pregunta que acabas de responder
 
-	document.getElementById(`pregunta${preguntaActualNum}`).style.display =
-		"none";
+	document.getElementById(`pregunta${preguntaActualNum}`).style.display ="none";
 
 	// SECCIÓN 4: Aavanza preguntaActualNum = 2, ++ => ahora es 3
 
@@ -241,19 +240,17 @@ function siguientePregunta() {
 
 	// SECCIÓN 5: Mostrar siguiente pregunta O procesar
 
-	if (preguntaActualNum <= 10) {
-		document.getElementById(`pregunta${preguntaActualNum}`).style.display =
-			"block";
+	if (preguntaActualNum <= 10) {  // Si preguntaActualNum = 4, 5, 6... hasta 10
+		document.getElementById(`pregunta${preguntaActualNum}`).style.display ="block";
 
 		// Actualizar texto "Pregunta X de 10"
 		document.getElementById("preguntaActual").textContent = preguntaActualNum;
 
-		actualizarProgreso();
+		actualizarProgreso();  // Actualiza la barra de progreso (40%, 50%)
 
 		document.getElementById("btnAnterior").style.display = "block"; // a partir de la preg 2 muestra btn anterior
 
-		if (preguntaActualNum === 10) {
-			// solo si es preg 10
+		if (preguntaActualNum === 10) { // solo si es preg 10
 			const btnSiguiente = document.getElementById("btnSiguiente");
 			btnSiguiente.classList.add("finalizar");
 			document.getElementById("textoSiguiente").textContent = "Analizar"; // Cambia el texto de "Siguiente" a "Analizar"
@@ -266,23 +263,24 @@ function siguientePregunta() {
 
 //(pantalla 2) // lo opuesto a siguientePregunta()
 function anteriorPregunta() {
-	document.getElementById(`pregunta${preguntaActualNum}`).style.display =
-		"none";
+	  // PASO 1: Ocultar la pregunta ACTUAL
+	document.getElementById(`pregunta${preguntaActualNum}`).style.display ="none";
 
-	preguntaActualNum--; //retrocede Resta 1
+	// PASO 2: RETROCEDER el número /resta 1
+	preguntaActualNum--; 
 
-	document.getElementById(`pregunta${preguntaActualNum}`).style.display =
-		"block"; // muestra la pre anterior
-
+	// PASO 3: Mostrar la pregunta ANTERIOR
+	document.getElementById(`pregunta${preguntaActualNum}`).style.display ="block"; 
+	// PASO 4: Actualizar el texto y la barra
 	document.getElementById("preguntaActual").textContent = preguntaActualNum;
-
 	actualizarProgreso();
 
+	// PASO 5: ¿Volvimos a la pregunta 1? / el btn anterior se oculta
 	if (preguntaActualNum === 1) {
-		//si volvemos a la pregunta 1 el btn anterior se oculta
 		document.getElementById("btnAnterior").style.display = "none";
 	}
 
+	// PASO 6: Restaurar el botón "Siguiente"
 	const btnSiguiente = document.getElementById("btnSiguiente");
 	btnSiguiente.classList.remove("finalizar"); // Quita la clase "finalizar" y restaura texto a siguiente
 	document.getElementById("textoSiguiente").textContent = "Siguiente";
@@ -365,18 +363,17 @@ function procesarAnalisis() {
 	mostrarResultados(resultadoAnalisis);
 }
 
-//(pantalla 3) llena html
+//(pantalla 3) llena html con el resultado de los datos q recudamos osea las respuestas
 function mostrarResultados(resultado) {
-	// muestro nombre de la empresa
-	document.getElementById("resultadoEmpresa").textContent =
-		resultado.nombreEmpresa;
+	 // PASO 1: MOSTRAR NOMBRE DE LA EMPRESA
+	document.getElementById("resultadoEmpresa").textContent = resultado.nombreEmpresa;
 
-	//mostrar nivel de riesgo
+	 // PASO 2: MOSTRAR NIVEL DE RIESGO
 	const nivelDiv = document.getElementById("resultadoNivel");
 	nivelDiv.textContent = resultado.conclusion;
 	nivelDiv.className = `nivel-badge ${resultado.nivelClase}`; // cambio su clase "nivel-badge nivel-alto"
 
-	// Mostrar puntos
+	// PASO 3: MOSTRAR PUNTOS Y BARRA
 	const porcentajePuntos = (resultado.puntosRiesgo / 215) * 100;
 
 	document.getElementById("resultadoPuntos").innerHTML = `
@@ -386,7 +383,7 @@ function mostrarResultados(resultado) {
 
 	document.getElementById("puntosFill").style.width = porcentajePuntos + "%";
 
-	// mostrar alertas
+	 // PASO 4: MOSTRAR ALERTAS
 	const alertasDiv = document.getElementById("resultadoAlertas");
 
 	// verifico si hay alertas
@@ -409,7 +406,7 @@ function mostrarResultados(resultado) {
         ${alertasHTML}
     `;
 	} else {
-		// Si NO hay alertas, muestro mensaje positivo
+		// Si NO hay alertas
 		alertasDiv.innerHTML = `
         <div style="text-align: center; padding: 30px; color: #00ba88; font-size: 1.3rem;">
             ✅ No se detectaron señales de alerta obvias
@@ -417,6 +414,7 @@ function mostrarResultados(resultado) {
     `;
 	}
 
+	// 🎬 AQUÍ CAMBIO LA PANTALLA
 	mostrarPantalla("pantallaResultados");
 }
 
@@ -428,37 +426,41 @@ function mostrarMenu() {
 
 //(pantalla 4) resetea formulario
 function nuevoAnalisis() {
-	// 1.reseteo datos
+	
+	// PASO 1: RESETEAR DATOS DEL ANÁLISIS ACTUAL
 	datosOfertaActual = {};
 	preguntaActualNum = 1;
 
-	document.getElementById("inputEmpresa").value = ""; // 2.limpio input empresa
+	// PASO 2: LIMPIAR EL INPUT DE EMPRESA
+	document.getElementById("inputEmpresa").value = ""; 
 
+	// PASO 3: DESMARCAR TODOS LOS BOTONES / saco la clase "seleccionado" se ve sin marcar
 	document.querySelectorAll(".btn-opcion").forEach((btn) => {
-		// 3.saco la clase "seleccionado" de todos los botones se ve sin marcar
 		btn.classList.remove("seleccionado");
 	});
 
+	// PASO 4: RESETEAR VISIBILIDAD DE PREGUNTAS
 	document.querySelectorAll(".pregunta").forEach((p, index) => {
-		// 4. Resetear visibilidad de preguntas
-		p.style.display = index === 0 ? "block" : "none"; //Si index === 0 → "block" (visible) sino oculto, solo pregunta 1 visible
+		p.style.display = index === 0 ? "block" : "none"; //Si index === 0 → "block" (visible) / Si index es otro número → "none" (oculto)
 
-		const error = p.querySelector(".error-message"); // Busco mensajes de error y si existen los oculto
-		if (error) error.style.display = "none";
 	});
-	// 5. Resetear UI
+	
+	// PASO 5: RESETEAR LA UI (interfaz)
 	document.getElementById("preguntaActual").textContent = "1";
 	document.getElementById("btnAnterior").style.display = "none"; // oculto btn anterior
 	document.getElementById("btnSiguiente").classList.remove("finalizar");
 	document.getElementById("textoSiguiente").textContent = "Siguiente";
 	actualizarProgreso(); //Barra de progreso al 10%
 
-	mostrarPantalla("pantallaFormulario"); // volvemos a la pantalla del formulario
+	// ↓ Vuelve al formulario limpio, listo para un nuevo análisis
+	mostrarPantalla("pantallaFormulario");
 }
 
 //(pantalla 4) cierro sesion y elimino datos
 function cerrarSesion() {
-	const nombreUsuario = localStorage.getItem("nombreUsuario");
+	
+	// PASO 1: VERIFICAR SI HAY SESIÓN ACTIVA
+	const nombreUsuario = localStorage.getItem("nombreUsuario"); // Busca nombre guardado en localStorage sino existe null
 
 	if (!nombreUsuario) {
 		Swal.fire({
@@ -470,6 +472,7 @@ function cerrarSesion() {
 		return;
 	}
 
+	// PASO 2: MOSTRAR CONFIRMACIÓN
 	Swal.fire({
 		title: "🔒 ¿Deseas cerrar sesión?",
 		html: `
@@ -491,43 +494,54 @@ function cerrarSesion() {
 		reverseButtons: true,
 	}).then((result) => {
 		if (result.isConfirmed) {
+			// PASO 3: ELIMINAR TODO DE LOCALSTORAGE
 			localStorage.clear();
 
+			// PASO 4: RESETEAR VARIABLES EN MEMORIA
 			historialAnalisis = [];
 			contadorAnalisis = 0;
 			datosOfertaActual = {};
 			preguntaActualNum = 1;
 
+			// PASO 5: LIMPIAR INPUTS
 			document.getElementById("inputNombre").value = "";
 			document.getElementById("inputEmpresa").value = "";
 
-			document
-				.querySelectorAll(".btn-opcion")
-				.forEach((btn) => btn.classList.remove("seleccionado"));
+			// PASO 6: DESMARCAR BOTONES
+			document.querySelectorAll(".btn-opcion").forEach((
+				btn) => btn.classList.remove("seleccionado"));
 
+			// PASO 7: RESETEAR PREGUNTAS
 			document.querySelectorAll(".pregunta").forEach((p, i) => {
 				p.style.display = i === 0 ? "block" : "none";
 			});
 
+			// PASO 8: RESETEAR UI
 			document.getElementById("btnAnterior").style.display = "none";
 			document.getElementById("preguntaActual").textContent = "1";
 			actualizarProgreso();
 
+			// PASO 9: MOSTRAR MENSAJE DE DESPEDIDA
 			Swal.fire({
 				icon: "success",
 				title: `Hasta luego, ${nombreUsuario} 👋`,
 				text: "Tu información fue eliminada correctamente.",
 				confirmButtonText: "Aceptar",
-			}).then(() => mostrarPantalla("pantallaBienvenida"));
+			}).then(() =>
+				// 🎬 VUELVE A LA PANTALLA DE BIENVENIDA
+				 mostrarPantalla("pantallaBienvenida"));
 		}
 	});
 }
 
 // (pantalla 5)
 function mostrarHistorial() {
-	const historialContainer = document.getElementById("historialContainer");
-	const estadisticas = document.getElementById("estadisticasHistorial");
+	 
+	// PASO 1: OBTENER ELEMENTOS DEL DOM
+	const historialContainer = document.getElementById("historialContainer"); //cards de cada análisis
+	const estadisticas = document.getElementById("estadisticasHistorial"); // se mostrarán las estadísticas
 
+	 // PASO 2: VERIFICAR SI HAY ANÁLISIS
 	if (historialAnalisis.length === 0) {
 		// si no hay analisis
 		historialContainer.innerHTML = `
@@ -538,6 +552,8 @@ function mostrarHistorial() {
         `;
 
 		estadisticas.innerHTML = "";
+		
+		// PASO 3: CALCULAR ESTADÍSTICAS
 	} else {
 		// si hay analisis // calcula estadisticas
 
@@ -548,6 +564,7 @@ function mostrarHistorial() {
 			(a) => a.puntosRiesgo < 20,
 		).length;
 
+		// PASO 4: GENERAR HTML DE ESTADÍSTICAS
 		let mensajeEstadisticas = `<div class="estadisticas">
             <p><strong>Total de análisis:</strong> ${historialAnalisis.length}</p>`;
 
@@ -565,7 +582,7 @@ function mostrarHistorial() {
 
 		estadisticas.innerHTML = mensajeEstadisticas;
 
-		// genero las cards de cada analisis
+		// PASO 5: GENERAR CARDS DE ANÁLISIS
 		const analisisHTML = historialAnalisis
 			.slice() // crea una copia del array no modifico el original
 			.reverse() // inviero el orden muestro los + recientes primero
@@ -588,7 +605,7 @@ function mostrarHistorial() {
 			})
 			.join("");
 
-		historialContainer.innerHTML = analisisHTML;
+		historialContainer.innerHTML = analisisHTML; // ↓ Inserta todas las cards en el container
 	}
 
 	mostrarPantalla("pantallaHistorial");
@@ -596,21 +613,28 @@ function mostrarHistorial() {
 
 // (pantalla 6)
 function verDetalle(indice) {
+	
+	// PASO 1: OBTENER EL ANÁLISIS
 	analisisSeleccionado = historialAnalisis[indice];
 
+	// PASO 2: OBTENER EL CONTAINER
 	const detalleContainer = document.getElementById("detalleContainer");
 
+	// PASO 3: GENERAR HTML COMPLETO
 	detalleContainer.innerHTML = `
         <div class="detalle-card">
+		 <!-- HEADER CON NOMBRE DE EMPRESA -->
             <div class="empresa-header">
                 <span class="empresa-icono">🏢</span>
                 <h2>${analisisSeleccionado.nombreEmpresa}</h2>
             </div>
 
+			 <!-- NIVEL DE RIESGO -->
             <div class="nivel-badge ${analisisSeleccionado.nivelClase}">
                 ${analisisSeleccionado.conclusion}
             </div>
 
+			<!-- PUNTOS -->
             <div class="puntos-container">
                 <div class="puntos-numero">
                     ${analisisSeleccionado.puntosRiesgo} 
@@ -618,6 +642,7 @@ function verDetalle(indice) {
                 </div>
             </div>
 
+			 <!-- INFORMACIÓN -->
             <div style="margin: 30px 0;">
                 <h3 class="resultado text-center" style="margin-bottom: 15px; color: #e1e8ed;">
                     📊 Información
@@ -658,7 +683,7 @@ function verDetalle(indice) {
             `
 						}
 
-          
+          	<!-- BOTÓN COMPARTIR -->
             <div style="margin-top: 35px; text-align: center;">
                 <button 
                     class="btn-compartir"
@@ -669,29 +694,37 @@ function verDetalle(indice) {
             </div>
         </div>
     `;
-
+ 	// 🎬 CAMBIA A LA PANTALLA DE DETALLE
 	mostrarPantalla("pantallaDetalle");
 }
 
 // (pantalla 6)
 function volverHistorial() {
+	// 🎬 VUELVE A LA PANTALLA DE HISTORIAL
 	mostrarHistorial();
+	// ↓ Ejecuta toda la función otra vez
+    // ↓ Regenera las cards
+    // ↓ Muestra la pantalla de historial
 }
 
 function compartirAnalisis(indice) {
+	
+	// PASO 1: OBTENER EL ANÁLISIS
 	const analisis = historialAnalisis[indice];
 
-	// creo el mensaje
+	 // PASO 2: CONSTRUIR EL MENSAJE
 	let mensaje = `🛡️ *ANTI SCAM – Análisis #${analisis.numeroAnalisis}*\n\n`;
 	mensaje += `🏢 *Empresa:* ${analisis.nombreEmpresa.toUpperCase()}\n`;
 	mensaje += `📊 *Nivel de riesgo:* ${analisis.nivelRiesgo}\n`;
 	mensaje += `🎯 *Puntuación:* ${analisis.puntosRiesgo}/215\n`;
 	mensaje += `📅 *Fecha:* ${analisis.fecha}\n\n`;
 
-	if (analisis.alertasDetectadas.length > 0) {
+	if (analisis.alertasDetectadas.length > 0) {  // ↓ Si hay alertas
 		mensaje += `🚨 *Alertas detectadas:*\n`;
-		analisis.alertasDetectadas.forEach((alerta, i) => {
+		analisis.alertasDetectadas.forEach((alerta, i) => { 
+			// ↓ Recorre cada alerta
 			mensaje += `${i + 1}. ${alerta.mensaje} (${alerta.puntos} pts)\n`;
+			// ↓ Agrega cada alerta numerada
 		});
 	} else {
 		mensaje += `✅ No se detectaron señales de alerta\n`;
@@ -699,17 +732,20 @@ function compartirAnalisis(indice) {
 
 	mensaje += `\n🔗 Analizá ofertas en:\nhttps://violetaatkinson.github.io/Anti-Scam/`;
 
-	//encodeURIComponent convierte el mensaje en un formato seguro para URLs.
+	 // PASO 3: CODIFICAR EL MENSAJE PARA URL  // Convierte caracteres especiales en formato seguro para URLs
 	const mensajeEncoded = encodeURIComponent(mensaje);
 
+	// PASO 4: CREAR URL DE WHATSAPP
 	const whatsappURL = `https://wa.me/?text=${mensajeEncoded}`;
 
-	// Intentar abrir WhatsApp
-	const ventana = window.open(whatsappURL, "_blank");
+	// PASO 5: ABRIR WHATSAPP
+	const ventana = window.open(whatsappURL, "_blank"); // ↓ Abre una nueva pestaña/ventana con esa URL
 
-	// Fallback si el navegador lo bloquea
+	// PASO 6: PLAN B (si el navegador bloquea popups)
 	if (!ventana) {
+		// ↓ Si window.open() devolvió null /  Significa que el navegador bloqueó el popup
 		navigator.clipboard.writeText(mensaje).then(() => {
+			// ↓ Copia el mensaje al portapapeles
 			Swal.fire({
 				icon: "success",
 				title: "📋 Copiado al portapapeles",

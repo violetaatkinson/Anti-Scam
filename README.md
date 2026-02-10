@@ -67,6 +67,6 @@
   <h3>👩‍💻 Autora</h3>
   <p>
     <strong>Violeta Atkinson</strong><br>
-    Proyecto realizado durante el curso <strong>Desarrollo Web Flex - CoderHouse</strong>
+    Proyecto realizado durante el curso <strong>Javascript - CoderHouse</strong>
   </p>
 </section>
