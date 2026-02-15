@@ -64,7 +64,6 @@ async function cargarNivelesRiesgo() {
 		const dataRiesgos = await response.json();
 		// contiene array con los niveles
 		nivelesRiesgo = dataRiesgos; // guardo los datos en la variable global
-		console.log("✅ Niveles de riesgo cargados:", nivelesRiesgo);
 	} catch (error) {
 		console.error("❌ Error al cargar niveles de riesgo:", error);
 

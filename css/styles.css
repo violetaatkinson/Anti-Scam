@@ -258,6 +258,29 @@ body {
         0 2px 6px rgba(29, 143, 225, 0.3);
 }
 
+.btn-opcion.seleccionado {
+    background: linear-gradient(-225deg, #1D8FE1 0%, #2f6bff 48%, #625EB1 100%);
+    color: #ffffff;
+    border: 2px solid #2f6bff;
+    box-shadow: 0 8px 20px rgba(47, 107, 255, 0.45), 0 2px 6px rgba(29, 143, 225, 0.4),inset 0 1px 3px rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px) scale(1.02);
+    font-weight: 600;
+    transition: all 0.3s ease;
+    animation: select-pulse 0.4s ease-out;
+}
+
+.btn-opcion.seleccionado:hover {
+    background: linear-gradient(-225deg, #2f8fff 0%, #4a7fff 48%, #7468c4 100%);
+    box-shadow: 0 10px 25px rgba(47, 107, 255, 0.6), 0 3px 8px rgba(29, 143, 225, 0.5),inset 0 1px 4px rgba(255, 255, 255, 0.3);
+    transform: translateY(-3px) scale(1.03);
+}
+
+
+.btn-opcion.seleccionado:active {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 4px 12px rgba(47, 107, 255, 0.35);
+}
+
 .btn {
     padding: 10px 30px !important;
     font-size: 1rem;
@@ -722,6 +745,18 @@ body {
     }
 }
 
+@keyframes select-pulse {
+    0% {
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        transform: translateY(-4px) scale(1.05);
+    }
+    100% {
+        transform: translateY(-2px) scale(1.02);
+    }
+}
+
 .swal2-popup {
     background: #1a1f29 !important;
     border: 1px solid #2a2f3a;
@@ -1086,6 +1121,16 @@ body {
         font-size: 0.8rem;        
         gap: 6px;                 
         border-radius: 40px;      
+    }
+
+     .btn-opcion.seleccionado {
+        transform: translateY(-1px) scale(1.01); 
+        box-shadow: 0 6px 15px rgba(47, 107, 255, 0.4), 0 2px 4px rgba(29, 143, 225, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.2);
+    
+    }
+    
+    .btn-opcion.seleccionado:hover {
+        transform: translateY(-1px) scale(1.01);
     }
 
 }
